@@ -11,7 +11,7 @@
       <div class="center">
         <mu-list>
           <mu-list-item v-for="(item,index) in list" :key="item.id" class="item">
-            <router-link :to="{name: 'song',params: { id: item.id,name1:item.name}}" class="aa">
+            <router-link :to="{name: 'song',params: { id: item.id,name1:item.name}}" class="aa" replace >
               <mu-list-item-content>
                 <mu-list-item-title class="title">
                   <span class="index">{{index+1}}</span>

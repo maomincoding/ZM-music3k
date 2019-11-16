@@ -29,7 +29,7 @@ export default new Vuex.Store({
       return state.xh--
     },
     songs (state, msg) {
-      state.songs.push(msg)
+      state.songs.unshift(msg)
     }
   },
   actions: {},

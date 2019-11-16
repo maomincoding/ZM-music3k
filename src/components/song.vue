@@ -113,7 +113,7 @@ export default {
       if (this.getsongs.length > 1) {
         if (this.$store.state.xh < this.getsongs.length - 1) {
           this.$store.commit('add')
-          this.$router.push({
+          this.$router.replace({
             name: 'song',
             params: {
               id: this.getsongs[this.getxh].id,
@@ -122,7 +122,7 @@ export default {
           })
         } else {
           this.$store.state.xh = 0
-          this.$router.push({
+          this.$router.replace({
             name: 'song',
             params: {
               id: this.getsongs[this.getxh].id,
@@ -136,7 +136,7 @@ export default {
       if (this.getsongs.length > 1) {
         if (this.$store.state.xh > 0) {
           this.$store.commit('jian')
-          this.$router.push({
+          this.$router.replace({
             name: 'song',
             params: {
               id: this.getsongs[this.getxh].id,
@@ -145,7 +145,7 @@ export default {
           })
         } else {
           this.$store.state.xh = this.getsongs.length - 1
-          this.$router.push({
+          this.$router.replace({
             name: 'song',
             params: {
               id: this.getsongs[this.getxh].id,
@@ -329,6 +329,7 @@ export default {
       this.$store.state.songid.splice(index, 1)
     },
     get () {
+      this.$store.state.iid = this.$route.params.id
       // mvid
       this.isloading = true
       console.log(this.$route.params.name1)
@@ -476,12 +477,12 @@ export default {
     Bus.$on('play11', () => {
       this.play1()
     })
-    Bus.$on('prep1', () => {
-      this.prep()
-    })
-    Bus.$on('next1', () => {
-      this.next()
-    })
+    // Bus.$on('prep1', () => {
+    //   this.prep()
+    // })
+    // Bus.$on('next1', () => {
+    //   this.next()
+    // })
     if (this.$store.state.i === 'dj' ) {
       this.$store.state.songs = []
       this.$store.state.i = ''
@@ -491,10 +492,12 @@ export default {
     this.$store.state.states = ''
     this.cl()
     var arr = this.$store.state.songid
+    console.log('播放的歌曲列表' + arr)
     arr.forEach((value, index) => {
       if (Number(arr[index]) === Number(this.$route.params.id)) {
-        console.log(index)
+        console.log('播放的歌曲序号' + index)
         this.$store.state.xh = index
+        // this.$store.state.iid = index
       }
     })
   },
@@ -532,8 +535,8 @@ export default {
     Bus.$off('seeked1', this.seeked());
     Bus.$off('pause11', this.pause1());
     Bus.$off('play11', this.play1());
-    Bus.$off('next1', this.next());
-    Bus.$off('prep1', this.prep());
+    // Bus.$off('next1', this.next());
+    // Bus.$off('prep1', this.prep());
   },
   beforeRouteLeave (to, from, next) {
     this.$store.state.isshow=false

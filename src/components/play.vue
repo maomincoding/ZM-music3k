@@ -146,7 +146,7 @@ export default {
     go (id, name, src) {
       this.open = false
       if (this.geti === 'dj') {
-        this.$router.push({
+        this.$router.replace({
           name: 'djplay',
           params: {
             id: id,
@@ -155,7 +155,7 @@ export default {
           }
         })
       } else {
-        this.$router.push({
+        this.$router.replace({
           name: 'song',
           params: {
             id: id,
