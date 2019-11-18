@@ -5,8 +5,6 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     songlist: '',
-    time: '',
-    time1: '',
     name: '',
     sub: '',
     src: '',
@@ -29,7 +27,10 @@ export default new Vuex.Store({
       return state.xh--
     },
     songs (state, msg) {
-      state.songs.unshift(msg)
+      state.songs.push(msg)
+    },
+    backzero (state) {
+      state.xh = 0
     }
   },
   actions: {},
@@ -39,9 +40,6 @@ export default new Vuex.Store({
     },
     playlist (state) {
       return state.songlist
-    },
-    currtime (state) {
-      return state.time
     },
     getname (state) {
       return state.name
@@ -54,9 +52,6 @@ export default new Vuex.Store({
     },
     getid (state) {
       return state.iid
-    },
-    gettime1 (state) {
-      return state.time1
     },
     geti (state) {
       return state.i

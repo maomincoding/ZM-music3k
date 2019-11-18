@@ -1,3 +1,4 @@
+<!--歌单-->
 <template>
   <div class="list">
     <mu-circular-progress :size="40" class="icon" v-if="isloading"/>
@@ -25,7 +26,6 @@
 <script>
 export default {
   name: 'songslist',
-  components: {},
   data () {
     return {
       isloading: false,
@@ -36,8 +36,6 @@ export default {
       text: 'List'
     }
   },
-  computed: {},
-  watch: {},
   methods: {
     refresh () {
       this.refreshing = true

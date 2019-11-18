@@ -1,3 +1,4 @@
+<!--搜索-->
 <template>
   <div class="search">
     <mu-appbar style="width: 100%;" class="back-b" color="primary">

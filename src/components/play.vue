@@ -1,12 +1,16 @@
+<!--底部栏音乐-->
 <template>
   <div v-if="playlist!=''">
     <mu-paper class="demo-paper audios-b ovf" :z-depth="3" >
-      <div class="ovf"  v-show="isshow===true">
-        <div style="float: left;width: 60%;margin-left:20%;" >
+      <div class="ovf listd"  v-show="isshow===true">
+        <mu-button  icon color="black" ripple @click.stop="openBotttomSheet"  class="liopen" style="float:left">
+          <mu-icon value="list"  size="30"></mu-icon>
+        </mu-button>
+        <div style="float: left;width: 60%;margin-left:7.5vw" >
           <mu-button   color="black" ripple icon  @click.stop="prep()"  style="float: left">
             <mu-icon value="skip_previous"  size="26"></mu-icon>
           </mu-button>
-          <mu-button   color="black" ripple icon   @click.stop="next()"  style="float: right">
+          <mu-button   color="black" ripple icon   @click.stop="next1()"  style="float: right">
             <mu-icon value="skip_next"  size="26"></mu-icon>
           </mu-button>
         </div>
@@ -14,7 +18,7 @@
           <mu-icon value="list"  size="30"></mu-icon>
         </mu-button>
       </div>
-      <div  class="listb ovf center" @click="f1()" v-show="isshow===false">
+      <div  class="listb ovf " @click="f1()" v-show="isshow===false">
         <div class="listb1"><img  alt="" class="lisimg" :src="src"></div>
         <div class="listb2">
           <mu-list-item-title>{{name}}</mu-list-item-title>
@@ -27,7 +31,7 @@
           <mu-button fab small color="primary" ripple v-show="!jj"  @click.stop="j0">
             <mu-icon value="play_arrow"  size="23"></mu-icon>
           </mu-button>
-          <mu-button fab small color="primary" ripple @click.stop="openBotttomSheet"  class="liopen">
+          <mu-button fab small color="primary" ripple @click.stop="openBotttomSheet"  class="liopen1" >
             <mu-icon value="list"  size="26"></mu-icon>
           </mu-button>
         </div>
@@ -110,22 +114,22 @@ export default {
   },
   methods: {
     timeupdate () {
-      Bus.$emit('timeupdate1', function () {})
+      Bus.$emit('timeupdate1')
     },
     seeked () {
-      Bus.$emit('seeked1', function () {})
+      Bus.$emit('seeked1')
     },
     pause1 () {
-      Bus.$emit('pause11', function () {})
+      Bus.$emit('pause11')
     },
     play1 () {
-      Bus.$emit('play11', function () {})
+      Bus.$emit('play11')
     },
     prep () {
-      Bus.$emit('prep1', function () {})
+      Bus.$emit('prep1')
     },
-    next () {
-      Bus.$emit('next1', function () {})
+    next1 () {
+      Bus.$emit('next1')
     },
     j1 () {
       this.$refs.audio.pause()
@@ -167,7 +171,7 @@ export default {
     f1 () {
       console.log(this.geti)
       if (this.geti === 'dj') {
-        this.$router.push({
+        this.$router.replace({
           name: 'djplay',
           params: {
             id: this.ids,
@@ -177,7 +181,7 @@ export default {
         })
         this.$store.state.time1 = this.currtime
       } else {
-        this.$router.push({
+        this.$router.replace({
           name: 'song',
           params: {
             id: this.ids,
@@ -188,7 +192,7 @@ export default {
       }
     },
     get () {
-      console.log(this.getsongs)
+      // console.log(this.getsongs)
       this.$store.state.states = 'on'
       if (this.playlist !== '') {
         this.name = this.getname
@@ -200,7 +204,7 @@ export default {
   beforeUpdate () {
     this.get()
     if (this.$store.state.pause1.length === 2) {
-      console.log(this.$store.state.pause1)
+      // console.log(this.$store.state.pause1)
       this.j1()
     }
     if (this.$store.state.pause1.length === 1) {
@@ -230,9 +234,6 @@ export default {
 
 </script>
 <style  scoped>
-  .liopen{
-    margin-left: 10px;
-  }
   .songname{
     overflow: hidden;
     text-overflow: ellipsis;
@@ -246,33 +247,39 @@ export default {
   .listb1{
     float: left;
     width: 13%;
+    margin: 5px 0 0 5px;
   }
   .listb2{
     float: left;
     margin-left:4%;
     width: 48%;
     color: #333;
+    margin-top: 5px;
   }
   .listb3{
     float: right;
     padding: 5px;
+    border-radius: 1rem;
   }
   .lisimg{
     width: 46.31px;
     height: 46.31px;
     border-radius:50%;
   }
+  .liopen1{
+    margin-left: 10px;
+  }
   .audios-b {
     position: fixed;
     width: 100%;
     z-index: 100;
     bottom: 0;
-    padding-top: 5px ;
+    background:#F1F3F4 ;
+    max-width: 640px;
   }
   audio {
     width: 97%;
     margin-left:1.5%;
-    background: #fff;
   }
   .mu-list{
     max-height: 50vh;

@@ -1,3 +1,4 @@
+<!--排行榜-->
 <template>
   <div class="list">
     <mu-circular-progress :size="40" class="icon" v-if="isloading"/>

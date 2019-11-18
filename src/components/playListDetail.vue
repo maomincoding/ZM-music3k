@@ -1,3 +1,4 @@
+<!--歌单详情-->
 <template>
   <div class="list">
     <mu-circular-progress :size="40" class="icon" v-if="isloading"/>
@@ -11,7 +12,7 @@
       <div class="center">
         <mu-list>
           <mu-list-item v-for="(item,index) in list" :key="item.id" class="item">
-            <router-link :to="{name: 'song',params: { id: item.id,name1:item.name}}" class="aa" replace >
+            <router-link :to="{name: 'song',params: { id: item.id,name1:item.name}}" class="aa" >
               <mu-list-item-content>
                 <mu-list-item-title class="title">
                   <span class="index">{{index+1}}</span>
@@ -67,21 +68,10 @@ export default {
       this.$router.isBack = true
     }
   },
-  // 解除keep-alive的缓存
-  beforeRouteEnter: (to, from, next) => {
-    next(vm => {
-      // 根据传过来的ID是否一样，判断加载
-      if (parseInt(to.params.id) !== parseInt(vm.id)) {
-        vm.get()
-      }
-      // 判断过来的路由是否带有对应的参数信息
-      if (to.params.id) {
-        // 获取songList传入的数据
-        vm.name = vm.$route.params.name
-        vm.id = vm.$route.params.id
-      }
-    })
+  mounted () {
+    this.get()
   }
+
 }
 </script>
 

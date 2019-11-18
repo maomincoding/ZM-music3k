@@ -1,3 +1,4 @@
+<!--推荐新音乐-->
 <template>
   <div class="list">
     <mu-circular-progress :size="40" class="icon" v-if="isloading"/>
@@ -10,7 +11,7 @@
       </mu-appbar>
       <div class="center lls">
         <div v-for="item in list" :key="item.id" class="listb ovf">
-           <router-link :to="{name: 'song',params: { id: item.id,name1:item.name}}" class="aa">
+           <router-link :to="{name: 'song',params: { id: item.id,name1:item.name}}" class="aa" >
           <div class="listb1"><img :src="item.album.picUrl" alt="" class="lisimg"></div>
           <div class="listb2">
             <mu-list-item-title>{{item.name}}</mu-list-item-title>
@@ -44,7 +45,7 @@ export default {
       this.isloading = true
       this.$axios.get(['/api/recommend/songs']).then(response => {
         // success
-        console.log(response.data.recommend)
+        // console.log(response.data.recommend)
         this.list = response.data.recommend
         this.isloading = false
       }).catch(error => {

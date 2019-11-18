@@ -1,5 +1,8 @@
+<!--首页-->
 <template>
   <div class="main">
+    <mu-circular-progress :size="40" class="icon" v-if="isloading"/>
+    <div v-show="!isloading">
     <mu-appbar style="width: 100%;" class="box ovf" color="primary">
         <mu-button icon slot="left" @click="open = !open">
         <mu-icon size="31" value="menu" ></mu-icon>
@@ -62,7 +65,7 @@
         </mu-carousel-item>
       </mu-carousel>
     </div>
-    <div class="icon ovf">
+    <div class="iconb ovf">
       <div v-for="(item,index) in icon" :key="index" class="icon1">
         <router-link :to="item.url">
           <img :src="item.src" alt>
@@ -117,6 +120,7 @@
       <mu-icon left :value="icon1"></mu-icon>
       {{color.message}}
     </mu-snackbar>
+    </div>
   </div>
 </template>
 
@@ -135,6 +139,7 @@ export default {
         open: false,
         timeout: 3000
       },
+      isloading: false,
       search: '',
       srcimg: '',
       flag: false,
@@ -273,14 +278,12 @@ export default {
         .get(['/api/logout'])
         .then(response => {
           // success
-          // console.log(response.data)
         })
         .catch(error => {
           // error
           alert('失败')
           console.log(error)
         })
-      // window.location.reload()
     },
     ss () {
       this.flag = !this.flag
@@ -302,16 +305,6 @@ export default {
   // 生命周期 - 创建完成（可以访问当前this实例）
   created () {
     this.docked = false
-    // this.$axios
-    //   .get(['/api/daily_signin'])
-    //   .then(response => {
-    //     // success
-    //     console.log(response.data)
-    //   })
-    //   .catch(error => {
-    //     // error
-    //     console.log(error)
-    //   })
     if (this.user1 === null) {
       this.$router.push({path: '/login/'})
     }
@@ -328,19 +321,19 @@ export default {
   // 生命周期 - 挂载完成（可以访问DOM元素） 428900128
   mounted () {
     // 用户名
+    this.isloading = true
     let user = localStorage.getItem('user')
     this.user1 = user
     this.$axios
       .get(['/api/user/detail?uid=' + user])
       .then(response => {
         // success
-        //   console.log(response.data.profile);
         this.srcimg = response.data.profile.avatarUrl
         this.nickname = response.data.profile.nickname
       })
       .catch(error => {
         // error
-        // alert('失败')
+        alert('失败')
         window.location.reload()
         console.log(error)
       })
@@ -348,7 +341,6 @@ export default {
       .get(['/api/user/record?uid=' + user])
       .then(response => {
         // success
-        // console.log(response.data)
       })
       .catch(error => {
         // error
@@ -373,7 +365,6 @@ export default {
       .then(response => {
         // success
         // this.list = response.data.playlist
-        console.log(response.data)
       })
       .catch(error => {
         // error
@@ -384,8 +375,8 @@ export default {
       .get(['/api/banner?type=2'])
       .then(response => {
         // success
-        // console.log(response.data.banners);
         this.banner = response.data.banners
+        this.isloading = false
       })
       .catch(error => {
         // error
@@ -397,7 +388,6 @@ export default {
       .get(['/api/mv/first?limit=9'])
       .then(response => {
         // success
-        console.log(response.data.data)
         this.mv = response.data.data
       })
       .catch(error => {
@@ -424,7 +414,6 @@ export default {
       .get(['/api/top/album?offset=0&limit=3'])
       .then(response => {
         // success
-        console.log(response.data.albums)
         this.xd = response.data.albums
       })
       .catch(error => {
@@ -438,7 +427,6 @@ export default {
       .then(response => {
         // success
         this.dt = response.data.data
-        console.log(response.data)
       })
       .catch(error => {
         // error
@@ -449,6 +437,10 @@ export default {
 }
 </script>
 <style  scoped>
+  .icon {
+    display: block !important;
+    margin: 75% auto 0;
+  }
   .gd-box{
     height:60vh;
     overflow-y: scroll;
@@ -571,7 +563,6 @@ li {
   margin-left: 5%;
 }
 .side2 {
-
   border-top:1px solid #2196f3 ;
 }
   .side2::-webkit-scrollbar{
@@ -610,7 +601,6 @@ li {
   width: 25%;
   border-radius: 50%;
 }
-
 .nickname {
   font-weight: bold;
   font-size: 16px;

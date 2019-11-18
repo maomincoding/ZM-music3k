@@ -1,3 +1,4 @@
+<!--歌曲播放-->
 <template>
   <div class="cc">
     <mu-circular-progress :size="40" class="icon" v-if="isloading"/>
@@ -66,7 +67,6 @@ export default {
     return {
       curId: 0,
       isloading: false,
-      url: '',
       imgsrc: '',
       lyric: '',
       love1: 0,
@@ -92,12 +92,12 @@ export default {
       loading: false,
       open1: false,
       ids: '',
-      ff: ''
+      ff: '',
+      backpath: ''
     }
   },
   computed: {
     ...mapGetters({
-      gettime1: 'gettime1',
       playlist: 'playlist',
       getsongs: 'getsongs',
       getid: 'getid',
@@ -109,10 +109,13 @@ export default {
   },
   watch: {},
   methods: {
-    next () {
+    // 下一首
+    next1 () {
+      console.log(window.history)
       if (this.getsongs.length > 1) {
-        if (this.$store.state.xh < this.getsongs.length - 1) {
-          this.$store.commit('add')
+        if (this.$store.state.xh >= this.getsongs.length - 1) {
+          this.$store.commit('backzero')
+          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'song',
             params: {
@@ -121,7 +124,8 @@ export default {
             }
           })
         } else {
-          this.$store.state.xh = 0
+          this.$store.commit('add')
+          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'song',
             params: {
@@ -132,10 +136,12 @@ export default {
         }
       }
     },
+    // 上一首
     prep () {
       if (this.getsongs.length > 1) {
         if (this.$store.state.xh > 0) {
           this.$store.commit('jian')
+          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'song',
             params: {
@@ -145,6 +151,7 @@ export default {
           })
         } else {
           this.$store.state.xh = this.getsongs.length - 1
+          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'song',
             params: {
@@ -155,6 +162,7 @@ export default {
         }
       }
     },
+    // 加入播放列表
     cl () {
       var obj = {}
       if (this.$store.state.songid.includes(Number(this.$route.params.id)) === false) {
@@ -162,11 +170,10 @@ export default {
         obj.name = this.$route.params.name1
         obj.id = this.$route.params.id
         this.$store.commit('songs', obj)
-        // this.$store.state.songs.push(obj)
-        console.log(obj)
       }
       this.isActive = true
     },
+    // 评论
     refresh () {
       this.refreshing = true
       this.$refs.container.scrollTop = 0
@@ -174,6 +181,7 @@ export default {
         this.refreshing = false
       }, 500)
     },
+    // 评论触底刷新
     load () {
       this.loading = true
       setTimeout(() => {
@@ -185,7 +193,7 @@ export default {
           ])
           .then(response => {
             // success
-            console.log(response.data.comments)
+            // console.log(response.data.comments)
             this.songpl = response.data.comments
           })
           .catch(error => {
@@ -207,6 +215,7 @@ export default {
     l0 () {
       this.curId = 0
     },
+    // 歌词滚动
     timeupdate () {
       this.currentLine = 0
       this.currentTime1 = document.querySelector('audio').currentTime
@@ -226,6 +235,7 @@ export default {
         }
       }
     },
+    // 快进
     seeked () {
       if (document.querySelector('.gc-b').innerHTML === '暂无歌词') {
         return false
@@ -245,20 +255,19 @@ export default {
         }
       }
     },
+    // 图片开始暂停
     pause1 () {
       document.querySelector('img').classList.add('pause11')
       this.$store.state.pause1.push(1)
-      console.log('a')
       this.ff = 1
     },
+    // 图片开始转动
     play1 (e) {
       this.$store.state.pause1 = []
-      if (this.gettime1 !== '') {
-        this.$refs.audio.currentTime = e
-      }
       document.querySelector('img').classList.remove('pause11')
       document.querySelector('img').classList.add('annim')
     },
+    // 喜欢
     love () {
       this.love1 = 1
       this.$axios
@@ -267,7 +276,7 @@ export default {
         ])
         .then(response => {
           // success
-          console.log(response.data)
+          // console.log(response.data)
           // this.url = response.data.data[0].url
         })
         .catch(error => {
@@ -276,6 +285,7 @@ export default {
           console.log(error)
         })
     },
+    // 不喜欢
     nolove () {
       this.love1 = 0
       this.$axios
@@ -293,27 +303,7 @@ export default {
           console.log(error)
         })
     },
-    go (id, name1, src) {
-      this.open1 = false
-      if (this.geti === 'dj') {
-        this.$router.push({
-          name: 'djplay',
-          params: {
-            id: id,
-            name1: name1,
-            src: this.src
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'song',
-          params: {
-            id: id,
-            name1: name1
-          }
-        })
-      }
-    },
+    // mv
     gomv () {
       document.querySelector('audio').pause()
       console.log(this.$store.state.playlist)
@@ -324,18 +314,15 @@ export default {
         }
       })
     },
-    romove (index) {
-      this.getsongs.splice(index, 1)
-      this.$store.state.songid.splice(index, 1)
-    },
+    // 获取信息
     get () {
+      console.log(this.getsongs)
+      console.log(this.$store.state.xh)
       this.$store.state.iid = this.$route.params.id
       // mvid
       this.isloading = true
-      console.log(this.$route.params.name1)
       this.$axios.get(['/api/search?keywords=' + this.$route.params.name1 + '&type=1004']).then(response => {
         // success
-        // console.log(response.data.result.mvs[0].id)
         this.mvid = response.data.result.mvs[0].id
       })
         .catch(error => {
@@ -350,8 +337,6 @@ export default {
         ])
         .then(response => {
           // success
-          // console.log(response.data.data[0].url)
-          this.url = response.data.data[0].url
           this.$store.state.songlist = response.data.data[0].url
         })
         .catch(error => {
@@ -366,7 +351,6 @@ export default {
         ])
         .then(response => {
           // success
-          console.log(response.data.songs[0].ar[0].name)
           document.querySelector('.gc-box').style.background = 'url(' + response.data.songs[0].al.picUrl + ')'
           this.imgsrc = response.data.songs[0].al.picUrl
           this.name = response.data.songs[0].name
@@ -392,7 +376,6 @@ export default {
         ])
         .then(response => {
           // success
-          // console.log(response.data.comments)
           this.songpl = response.data.comments
         })
         .catch(error => {
@@ -411,7 +394,6 @@ export default {
         .get(['/api/lyric?id=' + this.$route.params.id])
         .then(response => {
           // success
-          // console.log(response.data)
           if (response.data.lrc !== undefined) {
             this.lyric = response.data.lrc.lyric
           }
@@ -455,16 +437,22 @@ export default {
         });
       this.isloading = false
     },
+    // 返回
     back() {
       this.$router.go(-1)
       this.$router.isBack = true
     }
   },
+  // 路由更新
   beforeRouteUpdate (to, from, next) {
-    next ()
-    this.get()
+    if(to.fullPath!=from.fullPath){
+      next()
+      this.get()
+    }
   },
+  // 一开始加载
   mounted () {
+    this.get()
     Bus.$on('timeupdate1', () => {
       this.timeupdate()
     })
@@ -477,12 +465,12 @@ export default {
     Bus.$on('play11', () => {
       this.play1()
     })
-    // Bus.$on('prep1', () => {
-    //   this.prep()
-    // })
-    // Bus.$on('next1', () => {
-    //   this.next()
-    // })
+    Bus.$on('prep1', () => {
+      this.prep()
+    })
+    Bus.$on('next1', () => {
+      this.next1()
+    })
     if (this.$store.state.i === 'dj' ) {
       this.$store.state.songs = []
       this.$store.state.i = ''
@@ -497,10 +485,10 @@ export default {
       if (Number(arr[index]) === Number(this.$route.params.id)) {
         console.log('播放的歌曲序号' + index)
         this.$store.state.xh = index
-        // this.$store.state.iid = index
       }
     })
   },
+  // 时间处理
   filters: {
     getdate (val) {
       let date = new Date(val)
@@ -525,27 +513,24 @@ export default {
       return box
     }
   },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.get()
-    })
-  },
+  // 销毁之前
   beforeDestroy () {
-    Bus.$off('timeupdate1', this.timeupdate());
-    Bus.$off('seeked1', this.seeked());
-    Bus.$off('pause11', this.pause1());
-    Bus.$off('play11', this.play1());
-    // Bus.$off('next1', this.next());
-    // Bus.$off('prep1', this.prep());
+    Bus.$off('timeupdate1')
+    Bus.$off('seeked1')
+    Bus.$off('pause11')
+    Bus.$off('play11')
+    Bus.$off('next1')
+    Bus.$off('prep1')
   },
+  // 路由离开
   beforeRouteLeave (to, from, next) {
-    this.$store.state.isshow=false
+    this.$store.state.isshow = false
     this.$store.state.name=this.name
     this.$store.state.sub=this.subname
     this.$store.state.src=this.imgsrc
     this.$store.state.iid=this.$route.params.id
     next();
-  }
+  },
 };
 </script>
 <style  scoped>
@@ -560,10 +545,6 @@ export default {
   .gd{
     margin-top:20px;
     font-size: 18px;
-  }
-  audio {
-    width: 97%;
-    margin-left:1.5%;
   }
   .cc{
     background: rgba(0, 0, 0, 0.2);
