@@ -7,7 +7,7 @@
         <mu-button icon slot="left" @click="back">
           <mu-icon value="arrow_back"></mu-icon>
         </mu-button>
-        <span class="ttt">{{name}}</span>
+        <marquee direction='left' class="gd">{{name}}</marquee>
       </mu-appbar>
       <div class="img-b" >
         <img :src="src" alt class="annim">
@@ -60,7 +60,6 @@ export default {
       if (this.getsongs.length > 1) {
         if (this.$store.state.xh >= this.getsongs.length - 1) {
           this.$store.commit('backzero')
-          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'djplay',
             params: {
@@ -71,7 +70,6 @@ export default {
           })
         } else {
           this.$store.commit('add')
-          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'djplay',
             params: {
@@ -88,7 +86,6 @@ export default {
       if (this.getsongs.length > 1) {
         if (this.$store.state.xh > 0) {
           this.$store.commit('jian')
-          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'djplay',
             params: {
@@ -99,7 +96,6 @@ export default {
           })
         } else {
           this.$store.state.xh = this.getsongs.length - 1
-          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'djplay',
             params: {
@@ -122,6 +118,10 @@ export default {
       document.querySelector('img').classList.remove('pause11')
       document.querySelector('img').classList.add('annim')
     },
+    // 播放结束
+    ender () {
+      this.next1()
+    },
     // 列表跳转
     go (id, name1, src) {
       this.open1 = false
@@ -139,9 +139,9 @@ export default {
     // 获取
     get () {
       this.isloading = true
+      this.$store.state.iid = this.$route.params.id
       this.src = this.$route.params.src
       this.name = this.$route.params.name1
-      console.log(this.$route.params.id)
       this.$axios
         .get([
           '/api/song/url?id=' +
@@ -149,7 +149,6 @@ export default {
         ])
         .then(response => {
           // success
-          console.log(response.data)
           this.$store.state.songlist = response.data.data[0].url
           this.isloading = false
         })
@@ -180,6 +179,9 @@ export default {
     Bus.$on('next1', () => {
       this.next1()
     })
+    Bus.$on('ender', () => {
+      this.ender()
+    })
     this.$store.state.isshow = true
     this.$store.state.cs = 0
     if (this.$store.state.i !== 'dj') {
@@ -187,15 +189,6 @@ export default {
       this.$store.state.i = 'dj'
     }
     this.cl()
-    var arr = this.$store.state.songid
-    console.log('播放的歌曲列表' + arr)
-    arr.forEach((value, index) => {
-      if (Number(arr[index]) === Number(this.$route.params.id)) {
-        console.log('播放的歌曲序号' + index)
-        this.$store.state.xh = index
-      }
-    })
-    console.log(this.$store.state.i)
   },
   // 路由更新
   beforeRouteUpdate (to, from, next) {
@@ -206,12 +199,11 @@ export default {
   },
   // 销毁之前
   beforeDestroy () {
-    Bus.$off('timeupdate1')
-    Bus.$off('seeked1')
     Bus.$off('pause11')
     Bus.$off('play11')
     Bus.$off('next1')
     Bus.$off('prep1')
+    Bus.$off('ender', this.ender)
   },
   // 路由离开
   beforeRouteLeave (to, from, next) {
@@ -226,8 +218,15 @@ export default {
 </script>
 
 <style  scoped>
+  .gd{
+    margin-top:20px;
+    font-size: 18px;
+  }
   .annim{
     animation: rotating 10s infinite linear;
+  }
+  .pause11{
+    animation-play-state:paused;
   }
   .ttt{
     font-size: 18px;

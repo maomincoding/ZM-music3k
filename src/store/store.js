@@ -10,7 +10,6 @@ export default new Vuex.Store({
     src: '',
     iid: '',
     i: '',
-    pause1: [],
     songs: [],
     djs: [],
     songid: [],
@@ -28,6 +27,15 @@ export default new Vuex.Store({
     },
     songs (state, msg) {
       state.songs.push(msg)
+    },
+    name (state, val) {
+      state.name = val
+    },
+    src (state, val) {
+      state.src = val
+    },
+    subname (state, val) {
+      state.sub = val
     },
     backzero (state) {
       state.xh = 0

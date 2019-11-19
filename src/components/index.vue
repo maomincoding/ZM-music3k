@@ -192,7 +192,6 @@ export default {
   watch: {},
   methods: {
     re () {
-      // this.$cookies.remove('qd01')
       console.log(this.$cookies.keys())
     },
     tose () {
@@ -352,19 +351,6 @@ export default {
       .then(response => {
         // success
         this.list = response.data.playlist
-        // console.log(response.data.playlist)
-      })
-      .catch(error => {
-        // error
-        console.log(error)
-      })
-
-    // 我的歌单
-    this.$axios
-      .get(['/api/personal_fm'])
-      .then(response => {
-        // success
-        // this.list = response.data.playlist
       })
       .catch(error => {
         // error
@@ -376,7 +362,6 @@ export default {
       .then(response => {
         // success
         this.banner = response.data.banners
-        this.isloading = false
       })
       .catch(error => {
         // error
@@ -400,7 +385,6 @@ export default {
       .get(['/api/personalized?limit=6'])
       .then(response => {
         // success
-        // console.log(response.data)
         this.tjgd = response.data.result
       })
       .catch(error => {
@@ -427,6 +411,7 @@ export default {
       .then(response => {
         // success
         this.dt = response.data.data
+        this.isloading = false
       })
       .catch(error => {
         // error
@@ -501,6 +486,7 @@ li {
   width: 80%;
   height: 94.89px;
   border-radius: 8px;
+  object-fit: cover;
 }
 .xd-b p {
   margin: 0 !important;
@@ -559,8 +545,7 @@ li {
   top: 0;
 }
 .side2 div {
-  margin: 20px 0;
-  margin-left: 5%;
+  margin: 10px 5% 0 10px;
 }
 .side2 {
   border-top:1px solid #2196f3 ;
@@ -580,12 +565,14 @@ li {
   background: #f4f4f4;
 }
 .gdimg {
-  width: 15%;
+  width: 19%;
   border-radius: 50%;
   float: left;
+  margin: 0 4% 0 0;
+  object-fit: cover;
 }
 .gdtxt {
-  width: 80%;
+  width: 77%;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -599,6 +586,7 @@ li {
 }
 .usertx {
   width: 25%;
+  object-fit: cover;
   border-radius: 50%;
 }
 .nickname {
@@ -613,6 +601,7 @@ li {
 .bannerimg {
   width: 50%;
   border-radius: 10px;
+  object-fit: cover;
 }
 .mu-carousel-indicator-button__active {
   background: #2196f3 !important;

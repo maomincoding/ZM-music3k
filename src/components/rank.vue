@@ -48,7 +48,6 @@ export default {
       this.isloading = true
       this.$axios.get(['/api/top/list?idx=1']).then(response => {
         // success
-        console.log(response.data.playlist.tracks)
         this.list = response.data.playlist.tracks
         this.titi = response.data.playlist.name
         this.isloading = false

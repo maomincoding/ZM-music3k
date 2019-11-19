@@ -45,7 +45,6 @@ export default {
       this.isloading = true
       this.$axios.get(['/api/recommend/songs']).then(response => {
         // success
-        // console.log(response.data.recommend)
         this.list = response.data.recommend
         this.isloading = false
       }).catch(error => {
@@ -76,6 +75,7 @@ export default {
     width: 100%;
     height: 46.31px;
     border-radius:4px;
+    object-fit: cover;
   }
   mu-list-item-action img{
     width: 10% !important;

@@ -44,8 +44,6 @@ export default {
     get () {
       this.isloading = true
       this.name = this.$route.params.name1
-      // console.log(this.$route.params.name1)
-      console.log(this.name)
       this.$axios
         .get([
           '/api/dj/program?rid=' +
@@ -53,11 +51,7 @@ export default {
         ])
         .then(response => {
           // success
-          console.log(response.data)
-          // this.name = response.data.name
-          // this.name = response.data.playlist.name
           this.list = response.data.programs
-          // this.$store.state.src1 =response.data.programs
           this.isloading = false
         })
         .catch(error => {

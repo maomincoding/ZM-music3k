@@ -125,7 +125,6 @@ export default {
           ])
           .then(response => {
             // success
-            console.log(response.data)
             if (response.data.code === 200) {
               this.$axios
                 .get([
@@ -135,7 +134,6 @@ export default {
                 ])
                 .then(response => {
                   // success
-                  console.log(response)
                   if (response.statusText === 'OK') {
                     this.color.color = 'success'
                     this.color.message = '登录成功'

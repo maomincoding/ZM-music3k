@@ -8,7 +8,7 @@
           <mu-icon value="arrow_back"></mu-icon>
         </mu-button>
         <div class="big">
-          <marquee direction=left class="gd">{{name}} —— {{subname}}</marquee>
+          <marquee direction='left' class="gd">{{name}} —— {{subname}}</marquee>
         </div>
         <mu-button icon slot="right"  @click="open = !open">
           <mu-icon size="28" value="chat" class="play" color="white" center ></mu-icon>
@@ -111,11 +111,9 @@ export default {
   methods: {
     // 下一首
     next1 () {
-      console.log(window.history)
       if (this.getsongs.length > 1) {
         if (this.$store.state.xh >= this.getsongs.length - 1) {
           this.$store.commit('backzero')
-          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'song',
             params: {
@@ -125,7 +123,6 @@ export default {
           })
         } else {
           this.$store.commit('add')
-          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'song',
             params: {
@@ -141,7 +138,6 @@ export default {
       if (this.getsongs.length > 1) {
         if (this.$store.state.xh > 0) {
           this.$store.commit('jian')
-          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'song',
             params: {
@@ -151,7 +147,6 @@ export default {
           })
         } else {
           this.$store.state.xh = this.getsongs.length - 1
-          console.log('这是：' + this.getxh)
           this.$router.replace({
             name: 'song',
             params: {
@@ -162,12 +157,17 @@ export default {
         }
       }
     },
+    // 播放结束
+    ender () {
+      this.next1()
+    },
     // 加入播放列表
     cl () {
       var obj = {}
       if (this.$store.state.songid.includes(Number(this.$route.params.id)) === false) {
         this.$store.state.songid.push(Number(this.$route.params.id))
         obj.name = this.$route.params.name1
+        obj.sub = this.$route.params.sub
         obj.id = this.$route.params.id
         this.$store.commit('songs', obj)
       }
@@ -193,7 +193,6 @@ export default {
           ])
           .then(response => {
             // success
-            // console.log(response.data.comments)
             this.songpl = response.data.comments
           })
           .catch(error => {
@@ -258,12 +257,10 @@ export default {
     // 图片开始暂停
     pause1 () {
       document.querySelector('img').classList.add('pause11')
-      this.$store.state.pause1.push(1)
       this.ff = 1
     },
     // 图片开始转动
     play1 (e) {
-      this.$store.state.pause1 = []
       document.querySelector('img').classList.remove('pause11')
       document.querySelector('img').classList.add('annim')
     },
@@ -276,8 +273,6 @@ export default {
         ])
         .then(response => {
           // success
-          // console.log(response.data)
-          // this.url = response.data.data[0].url
         })
         .catch(error => {
           // error
@@ -294,8 +289,6 @@ export default {
         ])
         .then(response => {
           // success
-          console.log(response.data)
-          // this.url = response.data.data[0].url
         })
         .catch(error => {
           // error
@@ -306,7 +299,6 @@ export default {
     // mv
     gomv () {
       document.querySelector('audio').pause()
-      console.log(this.$store.state.playlist)
       this.$router.push({
         name: 'mv',
         params: {
@@ -316,8 +308,6 @@ export default {
     },
     // 获取信息
     get () {
-      console.log(this.getsongs)
-      console.log(this.$store.state.xh)
       this.$store.state.iid = this.$route.params.id
       // mvid
       this.isloading = true
@@ -453,6 +443,7 @@ export default {
   // 一开始加载
   mounted () {
     this.get()
+    // console.log(this.$route.params.sub)
     Bus.$on('timeupdate1', () => {
       this.timeupdate()
     })
@@ -471,6 +462,9 @@ export default {
     Bus.$on('next1', () => {
       this.next1()
     })
+    Bus.$on('ender', () => {
+      this.ender()
+    })
     if (this.$store.state.i === 'dj' ) {
       this.$store.state.songs = []
       this.$store.state.i = ''
@@ -479,14 +473,6 @@ export default {
     this.$store.state.cs = 0
     this.$store.state.states = ''
     this.cl()
-    var arr = this.$store.state.songid
-    console.log('播放的歌曲列表' + arr)
-    arr.forEach((value, index) => {
-      if (Number(arr[index]) === Number(this.$route.params.id)) {
-        console.log('播放的歌曲序号' + index)
-        this.$store.state.xh = index
-      }
-    })
   },
   // 时间处理
   filters: {
@@ -521,14 +507,14 @@ export default {
     Bus.$off('play11')
     Bus.$off('next1')
     Bus.$off('prep1')
+    Bus.$off('ender', this.ender)
   },
   // 路由离开
   beforeRouteLeave (to, from, next) {
     this.$store.state.isshow = false
-    this.$store.state.name=this.name
-    this.$store.state.sub=this.subname
-    this.$store.state.src=this.imgsrc
-    this.$store.state.iid=this.$route.params.id
+    this.$store.commit('name', this.name)
+    this.$store.commit('subname', this.subname)
+    this.$store.commit('src', this.imgsrc)
     next();
   },
 };

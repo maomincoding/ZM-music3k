@@ -49,7 +49,6 @@ export default {
         .get(['/api/user/record?uid=' + user + '&type=0'])
         .then(response => {
           // success
-          console.log(response.data)
           this.list = response.data.allData
           this.isloading = false
         })

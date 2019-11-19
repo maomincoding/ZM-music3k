@@ -79,7 +79,6 @@ export default {
           ])
           .then(response => {
             // success
-            console.log(response.data.result.songs)
             this.search1 = response.data.result.songs
           })
           .catch(error => {

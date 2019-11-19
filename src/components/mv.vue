@@ -1,6 +1,7 @@
 <!--MV-->
 <template>
     <div class="box">
+      <mu-circular-progress :size="40" class="icon" v-if="isloading"/>
       <mu-appbar style="width: 100%;" class="back-b" color="primary">
         <mu-button icon slot="left" @click="back">
           <mu-icon value="arrow_back"></mu-icon>
@@ -8,7 +9,7 @@
         <span class="ttt">{{ttt}}</span>
       </mu-appbar>
       <div class="video-b"><video class="video1" :src="arr1" controls autoplay></video></div>
-      <mu-list textline="three-line" class="pllist">
+      <mu-list textline="three-line" class="pllist" v-show="!isloading">
         <div class="ppl-t">评论</div>
         <div class="pl-box">
           <mu-load-more @refresh="refresh" :refreshing="refreshing" :loading="loading" @load="load">
@@ -37,7 +38,8 @@ export default {
       ttt: '',
       num: 20,
       refreshing: false,
-      loading: false
+      loading: false,
+      isloading: false
     }
   },
   methods: {
@@ -60,7 +62,6 @@ export default {
         this.$axios.get(['/api/comment/mv?id=' + this.$route.params.id] + '&limit=' + this.num)
           .then(response => {
             // success
-            console.log(response.data)
             response.data.comments.forEach(function (value, index) {
             })
             this.arr2 = response.data.comments
@@ -73,8 +74,8 @@ export default {
       }, 500)
     },
     get () {
+      this.isloading = true
       // mv
-      console.log(this.$route.params.id)
       this.arr1 = ''
       this.$axios.get(['/api/mv/detail?mvid=' + this.$route.params.id])
         .then(response => {
@@ -84,7 +85,6 @@ export default {
           for (let i in obj) {
             arr.push(obj[i])
           }
-          console.log(arr)
           this.arr1 = arr[1]
         })
         .catch(error => {
@@ -95,10 +95,10 @@ export default {
       this.$axios.get(['/api/comment/mv?id=' + this.$route.params.id] + '&limit=40')
         .then(response => {
           // success
-          console.log(response.data)
           response.data.comments.forEach(function (value, index) {
           })
           this.arr2 = response.data.comments
+          this.isloading = false
         })
         .catch(error => {
           // error
@@ -131,12 +131,10 @@ export default {
       return box
     }
   },
-  created () {
-    this.$store.state.songlist = ''
-    this.ttt = this.$route.params.name1
-  },
   mounted () {
     this.get()
+    this.$store.state.songlist = ''
+    this.ttt = this.$route.params.name1
   }
 }
 </script>
@@ -168,7 +166,8 @@ export default {
   }
   .video1{
     width: 100%;
-    height: auto;
+    height:100%;
+    object-fit:cover;
   }
   .pl{
     width: 95%;

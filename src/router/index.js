@@ -118,7 +118,7 @@ export default new Router({
       }
     },
     {
-      path: '/song/:id/:name1',
+      path: '/song/:id/:name1/:sub/',
       name: 'song',
       component: pather => require(['../components/song.vue'], pather),
       meta: {

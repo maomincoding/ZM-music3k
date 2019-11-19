@@ -12,7 +12,7 @@
       <div class="center">
         <mu-list>
           <mu-list-item v-for="(item,index) in list" :key="item.id" class="item">
-            <router-link :to="{name: 'song',params: { id: item.id,name1:item.name}}" class="aa" >
+            <router-link :to="{name: 'song',params: { id: item.id,name1:item.name,sub:item.ar[0].name}}" class="aa" >
               <mu-list-item-content>
                 <mu-list-item-title class="title">
                   <span class="index">{{index+1}}</span>
@@ -29,7 +29,6 @@
 </template>
 
 <script>
-// import { mapGetters } from "vuex";
 export default {
   name: 'playListDetail',
   components: {},
@@ -52,7 +51,6 @@ export default {
         ])
         .then(response => {
           // success
-          // console.log(response.data)
           this.name = response.data.playlist.name
           this.list = response.data.playlist.tracks
           this.isloading = false

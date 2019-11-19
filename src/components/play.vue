@@ -3,9 +3,11 @@
   <div v-if="playlist!=''">
     <mu-paper class="demo-paper audios-b ovf" :z-depth="3" >
       <div class="ovf listd"  v-show="isshow===true">
-        <mu-button  icon color="black" ripple @click.stop="openBotttomSheet"  class="liopen" style="float:left">
-          <mu-icon value="list"  size="30"></mu-icon>
-        </mu-button>
+        <div  style="float:left" class="liopen">
+          <mu-button  icon color="black" ripple  v-for="(item,index) in icons"  :key="index" v-if="item.is" @click.stop="made(index)">
+            <mu-icon   :value="item.val"  size="30"  ></mu-icon>
+          </mu-button>
+        </div>
         <div style="float: left;width: 60%;margin-left:7.5vw" >
           <mu-button   color="black" ripple icon  @click.stop="prep()"  style="float: left">
             <mu-icon value="skip_previous"  size="26"></mu-icon>
@@ -15,7 +17,7 @@
           </mu-button>
         </div>
         <mu-button  icon color="black" ripple @click.stop="openBotttomSheet"  class="liopen" style="float: right">
-          <mu-icon value="list"  size="30"></mu-icon>
+          <mu-icon value="queue_music"  size="30"></mu-icon>
         </mu-button>
       </div>
       <div  class="listb ovf " @click="f1()" v-show="isshow===false">
@@ -32,7 +34,7 @@
             <mu-icon value="play_arrow"  size="23"></mu-icon>
           </mu-button>
           <mu-button fab small color="primary" ripple @click.stop="openBotttomSheet"  class="liopen1" >
-            <mu-icon value="list"  size="26"></mu-icon>
+            <mu-icon value="queue_music"  size="26"></mu-icon>
           </mu-button>
         </div>
       </div>
@@ -41,9 +43,10 @@
         :controls="isshow"
         :src="playlist"
         ref="audio"
-        loop="loop"
+        :loop="modeLoop"
         class="audios"
         autoplay
+        @ended="ender"
         @timeupdate="timeupdate"
         @seeked="seeked"
         @pause="pause1"
@@ -72,6 +75,9 @@
         </mu-list-item>
       </mu-list>
     </mu-bottom-sheet>
+    <mu-snackbar :color="color.color" :open.sync="color.open">
+      {{tag}}
+    </mu-snackbar>
   </div>
 </template>
 <script>import Bus from '../bus/bus'
@@ -87,18 +93,36 @@ export default {
       url: '',
       jj: true,
       open: false,
+      modeLoop: true,
       ids: '',
       isActive: false,
       cTime: '',
       currentLine: 0,
-      currentTime1: ''
+      currentTime1: '',
+      tag: '',
+      iindex: 0,
+      color: {
+        color: 'info',
+        message: ['顺序播放', '单曲循环'],
+        open: false,
+        timeout: 1000
+      },
+      icons: [
+        {
+          val: 'repeat_one',
+          is: true
+        },
+        {
+          val: 'loop',
+          is: false
+        }
+      ]
     }
   },
   computed: {
     ...mapGetters({
       playlist: 'playlist',
       isshow: 'isshow',
-      currtime: 'currtime',
       getname: 'getname',
       getsub: 'getsub',
       getsrc: 'getsrc',
@@ -113,6 +137,33 @@ export default {
     }
   },
   methods: {
+    openColorSnackbar (i) {
+      this.tag = this.color.message[i]
+      if (this.color.timer) clearTimeout(this.color.timer)
+      this.color.open = true
+      this.color.timer = setTimeout(() => {
+        this.color.open = false
+      }, this.color.timeout)
+    },
+    made (index) {
+      this.iindex++
+      if (this.iindex >= this.icons.length) {
+        this.iindex = 0
+      }
+      this.icons.forEach((val) => {
+        val.is = false
+      })
+      this.icons[this.iindex].is = true
+      if (this.iindex === 0) {
+        this.modeLoop = true
+      } else if (this.iindex === 1) {
+        this.modeLoop = false
+      }
+      this.openColorSnackbar(index)
+    },
+    ender () {
+      Bus.$emit('ender')
+    },
     timeupdate () {
       Bus.$emit('timeupdate1')
     },
@@ -121,24 +172,18 @@ export default {
     },
     pause1 () {
       Bus.$emit('pause11')
+      this.$store.state.pause1 = 'off'
+      this.jj = false
     },
     play1 () {
       Bus.$emit('play11')
+      this.jj = true
     },
     prep () {
       Bus.$emit('prep1')
     },
     next1 () {
       Bus.$emit('next1')
-    },
-    j1 () {
-      this.$refs.audio.pause()
-      this.$store.state.pause1 = 'off'
-      this.jj = false
-    },
-    j0 () {
-      this.$refs.audio.play()
-      this.jj = true
     },
     openBotttomSheet () {
       this.open = true
@@ -163,15 +208,15 @@ export default {
           name: 'song',
           params: {
             id: id,
+            sub: this.sub,
             name1: name
           }
         })
       }
     },
     f1 () {
-      console.log(this.geti)
       if (this.geti === 'dj') {
-        this.$router.replace({
+        this.$router.push({
           name: 'djplay',
           params: {
             id: this.ids,
@@ -181,10 +226,11 @@ export default {
         })
         this.$store.state.time1 = this.currtime
       } else {
-        this.$router.replace({
+        this.$router.push({
           name: 'song',
           params: {
             id: this.ids,
+            sub: this.sub,
             name1: this.name
           }
         })
@@ -192,43 +238,29 @@ export default {
       }
     },
     get () {
-      // console.log(this.getsongs)
       this.$store.state.states = 'on'
       if (this.playlist !== '') {
         this.name = this.getname
         this.sub = this.getsub
         this.src = this.getsrc
       }
-    }
-  },
-  beforeUpdate () {
-    this.get()
-    if (this.$store.state.pause1.length === 2) {
-      // console.log(this.$store.state.pause1)
-      this.j1()
-    }
-    if (this.$store.state.pause1.length === 1) {
-      this.j0()
+      if (this.getid !== '') {
+        this.ids = Number(this.getid)
+        if (this.open === true) {
+          var obj = document.getElementsByClassName('songlists')
+          var arr = Array.prototype.slice.call(obj)
+          arr.forEach((value, index) => {
+            if (Number(arr[index].getAttribute('alt')) === this.ids) {
+              arr[index].style.background = '#f5f5f5'
+            }
+          })
+        }
+        this.isActive = true
+      }
     }
   },
   updated () {
-    if (this.getid !== '') {
-      this.ids = this.getid
-      if (this.open === true) {
-        var obj = document.getElementsByClassName('songlists')
-        var arr = Array.prototype.slice.call(obj) // [].slice.call(obj);
-        console.log(this.ids)
-        console.log(arr)
-        arr.forEach((value, index) => {
-          console.log(arr[index].getAttribute('alt'))
-          if (Number(arr[index].getAttribute('alt')) === this.ids) {
-            arr[index].style.background = '#f5f5f5'
-            console.log(index)
-          }
-        })
-      }
-      this.isActive = true
-    }
+    this.get()
   }
 }
 

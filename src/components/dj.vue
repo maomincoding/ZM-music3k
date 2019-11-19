@@ -54,18 +54,16 @@ export default {
       this.$router.isBack = true
     },
     cli (index) {
+      this.isloading = true
       this.open = !this.open
-      console.log(index)
-      console.log(this.tjgd[index])
-      console.log(this.tjgd[index].radios)
       this.tits = this.tjgd[index].categoryName
       this.tjgd1 = this.tjgd[index].radios
+      this.isloading = false
     },
     get () {
       this.isloading = true
       this.$axios.get(['/api/dj/category/recommend']).then(response => {
         // success
-        console.log(response.data.data)
         this.tjgd = response.data.data
         this.isloading = false
       }).catch(error => {
@@ -112,6 +110,7 @@ export default {
     width: 99.89px;
     height: 99.89px;
     border-radius: 8px;
+    object-fit: cover;
   }
   .tit {
     text-align: center;

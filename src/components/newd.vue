@@ -47,7 +47,6 @@ export default {
         .get(['/api/album?id=' + this.$route.params.id])
         .then(response => {
           // success
-          console.log(response.data.songs)
           this.list = response.data.songs
           this.isloading = false
         }).catch(error => {

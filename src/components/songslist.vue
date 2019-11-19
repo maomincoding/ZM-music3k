@@ -139,5 +139,6 @@ export default {
     width: 80%;
     height:99.89px;
     border-radius: 8px;
+    object-fit: cover;
   }
 </style>
