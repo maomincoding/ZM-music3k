@@ -118,7 +118,8 @@ export default {
             name: 'song',
             params: {
               id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name
+              name1: this.getsongs[this.getxh].name,
+              sub: this.getsongs[this.getxh].sub
             }
           }).catch(err => { console.log(err) })
         } else {
@@ -127,7 +128,8 @@ export default {
             name: 'song',
             params: {
               id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name
+              name1: this.getsongs[this.getxh].name,
+              sub: this.getsongs[this.getxh].sub
             }
           }).catch(err => { console.log(err) })
         }
@@ -142,7 +144,8 @@ export default {
             name: 'song',
             params: {
               id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name
+              name1: this.getsongs[this.getxh].name,
+              sub: this.getsongs[this.getxh].sub
             }
           }).catch(err => { console.log(err) })
         } else {
@@ -151,7 +154,8 @@ export default {
             name: 'song',
             params: {
               id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name
+              name1: this.getsongs[this.getxh].name,
+              sub: this.getsongs[this.getxh].sub
             }
           }).catch(err => { console.log(err) })
         }
