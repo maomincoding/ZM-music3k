@@ -67,7 +67,7 @@ export default {
               name1: this.getsongs[this.getxh].name,
               src: this.getsongs[this.getxh].src
             }
-          })
+          }).catch(err => { console.log(err) })
         } else {
           this.$store.commit('add')
           this.$router.replace({
@@ -77,7 +77,7 @@ export default {
               name1: this.getsongs[this.getxh].name,
               src: this.getsongs[this.getxh].src
             }
-          })
+          }).catch(err => { console.log(err) })
         }
       }
     },
@@ -93,7 +93,7 @@ export default {
               name1: this.getsongs[this.getxh].name,
               src: this.getsongs[this.getxh].src
             }
-          })
+          }).catch(err => { console.log(err) })
         } else {
           this.$store.state.xh = this.getsongs.length - 1
           this.$router.replace({
@@ -103,7 +103,7 @@ export default {
               name1: this.getsongs[this.getxh].name,
               src: this.getsongs[this.getxh].src
             }
-          })
+          }).catch(err => { console.log(err) })
         }
       }
     },
