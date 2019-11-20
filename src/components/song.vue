@@ -144,7 +144,7 @@ export default {
               id: this.getsongs[this.getxh].id,
               name1: this.getsongs[this.getxh].name
             }
-          })
+          }).catch(err => { console.log(err) })
         } else {
           this.$store.state.xh = this.getsongs.length - 1
           this.$router.replace({
@@ -153,7 +153,7 @@ export default {
               id: this.getsongs[this.getxh].id,
               name1: this.getsongs[this.getxh].name
             }
-          })
+          }).catch(err => { console.log(err) })
         }
       }
     },
