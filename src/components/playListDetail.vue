@@ -68,6 +68,21 @@ export default {
   },
   mounted () {
     this.get()
+  },
+    // 解除keep-alive的缓存
+  beforeRouteEnter: (to, from, next) => {
+    next(vm => {
+      // 根据传过来的ID是否一样，判断加载
+      if (parseInt(to.params.id) !== parseInt(vm.id)) {
+        vm.get()
+      }
+      // 判断过来的路由是否带有对应的参数信息
+      if (to.params.id) {
+        // 获取songList传入的数据
+        vm.name = vm.$route.params.name
+        vm.id = vm.$route.params.id
+      }
+    })
   }
 
 }
