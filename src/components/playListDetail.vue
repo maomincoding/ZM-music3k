@@ -69,7 +69,7 @@ export default {
   mounted () {
     this.get()
   },
-    // 解除keep-alive的缓存
+  // 解除keep-alive的缓存
   beforeRouteEnter: (to, from, next) => {
     next(vm => {
       // 根据传过来的ID是否一样，判断加载

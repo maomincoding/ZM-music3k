@@ -146,20 +146,22 @@ export default {
       }, this.color.timeout)
     },
     made (index) {
-      this.iindex++
-      if (this.iindex >= this.icons.length) {
-        this.iindex = 0
+      if (this.getsongs.length > 1) {
+        this.iindex++
+        if (this.iindex >= this.icons.length) {
+          this.iindex = 0
+        }
+        this.icons.forEach((val) => {
+          val.is = false
+        })
+        this.icons[this.iindex].is = true
+        if (this.iindex === 0) {
+          this.modeLoop = true
+        } else if (this.iindex === 1) {
+          this.modeLoop = false
+        }
+        this.openColorSnackbar(index)
       }
-      this.icons.forEach((val) => {
-        val.is = false
-      })
-      this.icons[this.iindex].is = true
-      if (this.iindex === 0) {
-        this.modeLoop = true
-      } else if (this.iindex === 1) {
-        this.modeLoop = false
-      }
-      this.openColorSnackbar(index)
     },
     ender () {
       Bus.$emit('ender')
