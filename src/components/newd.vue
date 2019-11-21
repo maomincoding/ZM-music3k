@@ -11,7 +11,7 @@
       </mu-appbar>
       <div class="center lls">
         <div v-for="(item,index) in list" :key="index" class="listb ovf">
-          <router-link :to="{name: 'song',params: { id: item.id,name1: item.name}}" class="aa">
+          <router-link :to="{name: 'song',params: { id: item.id,name1: item.name, sub:item.ar[0].name}}" class="aa">
             <div class="listb1"><img :src="item.al.picUrl" alt="" class="lisimg"></div>
             <div class="listb2">
               <mu-list-item-title>{{item.name}}</mu-list-item-title>
@@ -48,6 +48,7 @@ export default {
         .then(response => {
           // success
           this.list = response.data.songs
+          this.$store.commit('playlist', response.data.songs)
           this.isloading = false
         }).catch(error => {
         // error
@@ -55,6 +56,9 @@ export default {
           console.log(error)
         })
     }
+  },
+  created () {
+    this.$store.commit('playlist', '')
   },
   // 解除keep-alive的缓存
   beforeRouteEnter: (to, from, next) => {

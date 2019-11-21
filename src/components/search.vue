@@ -16,7 +16,7 @@
       class="int"
     ></mu-text-field>
     <div class="sealist">
-      <div class="sealist-item ovf" v-for="item in search1" :key="item.id" @click="go(item.id,item.name)">
+      <div class="sealist-item ovf" v-for="item in search1" :key="item.id" @click="go(item.id,item.name, item.artists[0].name,)">
           <div class="sealist-item1">
             <mu-button icon>
               <mu-icon value="search" size="22" color="black"></mu-icon>
@@ -58,12 +58,13 @@ export default {
     }
   },
   methods: {
-    go (id, name) {
-      this.$router.push({
+    go (id, name, sub) {
+      this.$router.replace({
         name: 'song',
         params: {
           id: id,
-          name1: name
+          name1: name,
+          sub: sub
         }
       })
     },
@@ -80,6 +81,7 @@ export default {
           .then(response => {
             // success
             this.search1 = response.data.result.songs
+            // console.log(response.data.result.songs)
           })
           .catch(error => {
             // error

@@ -11,7 +11,7 @@
       </mu-appbar>
       <mu-list class="item-b">
         <mu-list-item v-for="(item,index) in list" :key="item.id" class="item">
-          <router-link :to="{name: 'song',params: { id: item.id,name1:item.name}}" class="aa">
+          <router-link :to="{name: 'song',params: { id: item.id,name1:item.name, sub:item.ar[0].name}}" class="aa">
             <mu-list-item-content>
               <mu-list-item-title class="title">
                 <span class="index">{{index+1}}</span>
@@ -49,6 +49,7 @@ export default {
       this.$axios.get(['/api/top/list?idx=1']).then(response => {
         // success
         this.list = response.data.playlist.tracks
+        this.$store.commit('playlist', response.data.playlist.tracks)
         this.titi = response.data.playlist.name
         this.isloading = false
       }).catch(error => {
@@ -59,6 +60,7 @@ export default {
     }
   },
   created () {
+    this.$store.commit('playlist', '')
     this.get()
   }
 }

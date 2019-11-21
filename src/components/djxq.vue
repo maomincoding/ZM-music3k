@@ -52,6 +52,7 @@ export default {
         .then(response => {
           // success
           this.list = response.data.programs
+          this.$store.commit('playlist', response.data.programs)
           this.isloading = false
         })
         .catch(error => {
@@ -64,6 +65,9 @@ export default {
       this.$router.go(-1)
       this.$router.isBack = true
     }
+  },
+  created () {
+    this.$store.commit('playlist', '')
   },
   // 解除keep-alive的缓存
   beforeRouteEnter: (to, from, next) => {

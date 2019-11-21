@@ -8,7 +8,7 @@
         </mu-button>
         <span class="ttt">{{ttt}}</span>
       </mu-appbar>
-      <div class="video-b"><video class="video1" :src="arr1" controls autoplay></video></div>
+      <div class="video-b"><video class="video1" :src="arr1" controls autoplay="autoplay"></video></div>
       <mu-list textline="three-line" class="pllist" v-show="!isloading">
         <div class="ppl-t">评论</div>
         <div class="pl-box">
@@ -133,7 +133,8 @@ export default {
   },
   mounted () {
     this.get()
-    this.$store.state.songlist = ''
+    // this.$store.state.songlist = ''
+    this.$store.state.isshow = ''
     this.ttt = this.$route.params.name1
   }
 }

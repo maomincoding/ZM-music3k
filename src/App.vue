@@ -6,7 +6,7 @@
       </keep-alive>
     </transition >
     <transition :name="transitionName">
-      <router-view v-if="!$route.meta.keepAlive"  class="Router" ></router-view>
+      <router-view v-if="!$route.meta.keepAlive"  class="Router" :key="key"></router-view>
     </transition >
     <Play></Play>
   </div>
@@ -23,6 +23,11 @@ export default {
   components: {
     Play
   },
+  computed: {
+    key () {
+      return this.$route.fullPath
+    }
+  },
   watch: {
     '$route' (to, from) {
       // console.log('变化了')
@@ -30,12 +35,7 @@ export default {
       let isBack = this.$router.isBack // 监听路由变化时的状态为前进还是后退
       if (isBack === true) {
         this.transitionName = 'slide-right'
-        // from.meta.keepAlive = false
-        // to.meta.keepAlive = true
       } else {
-        // from.meta.keepAlive = true
-        // to.meta.keepAlive = false
-        // this.transitionName = 'slide-left'
         if (this.$route.path.split('/').length < 3) {
           this.transitionName = 'slide-fade'
         } else {
@@ -44,12 +44,6 @@ export default {
       }
       this.$router.isBack = false
     }
-  },
-  // components: {
-  //   Play
-  // },
-  computed: {
-
   }
 }
 </script>

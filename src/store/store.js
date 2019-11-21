@@ -4,15 +4,14 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    songlist: '',
+    song: '',
     name: '',
     sub: '',
     src: '',
     iid: '',
     i: '',
-    songs: [],
     djs: [],
-    songid: [],
+    playlist: '',
     xh: 0,
     cs: 0,
     src1: '',
@@ -25,8 +24,8 @@ export default new Vuex.Store({
     jian (state) {
       return state.xh--
     },
-    songs (state, msg) {
-      state.songs.push(msg)
+    song (state, val) {
+      state.song = val
     },
     name (state, val) {
       state.name = val
@@ -39,6 +38,12 @@ export default new Vuex.Store({
     },
     backzero (state) {
       state.xh = 0
+    },
+    playlist (state, val) {
+      state.playlist = val
+    },
+    xh (state, val) {
+      state.xh = val
     }
   },
   actions: {},
@@ -46,8 +51,8 @@ export default new Vuex.Store({
     isshow (state) {
       return state.isshow
     },
-    playlist (state) {
-      return state.songlist
+    getsong (state) {
+      return state.song
     },
     getname (state) {
       return state.name
@@ -64,11 +69,8 @@ export default new Vuex.Store({
     geti (state) {
       return state.i
     },
-    getsongs (state) {
-      return state.songs
-    },
-    getsongid (state) {
-      return state.songid
+    getplaylist (state) {
+      return state.playlist
     },
     getxh (state) {
       return state.xh

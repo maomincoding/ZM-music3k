@@ -39,7 +39,6 @@ export default {
       name: ''
     }
   },
-  computed: {},
   watch: {},
   methods: {
     get () {
@@ -53,6 +52,8 @@ export default {
           // success
           this.name = response.data.playlist.name
           this.list = response.data.playlist.tracks
+          // console.log(response.data.playlist.tracks)
+          this.$store.commit('playlist', response.data.playlist.tracks)
           this.isloading = false
         })
         .catch(error => {
@@ -66,8 +67,8 @@ export default {
       this.$router.isBack = true
     }
   },
-  mounted () {
-    this.get()
+  created () {
+    this.$store.commit('playlist', '')
   },
   // 解除keep-alive的缓存
   beforeRouteEnter: (to, from, next) => {

@@ -1,7 +1,7 @@
 {
-  "name": "demo-music",
-  "version": "1.0.0",
-  "description": "A Vue.js project",
+  "name": "ZM-music",
+  "version": "3.0.0",
+  "description": "music App",
   "author": "maomin",
   "private": true,
   "scripts": {
@@ -16,7 +16,7 @@
     "px2rem-loader": "^0.1.9",
     "vue": "^2.5.2",
     "vue-cookies": "^1.5.13",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.1.3"
   },
   "devDependencies": {
     "animate.css": "^3.7.2",

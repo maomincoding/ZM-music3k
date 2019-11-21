@@ -93,13 +93,14 @@ export default {
       open1: false,
       ids: '',
       ff: '',
-      backpath: ''
+      backpath: '',
+      isserch: false
     }
   },
   computed: {
     ...mapGetters({
-      playlist: 'playlist',
-      getsongs: 'getsongs',
+      getsong: 'getsong',
+      getplaylist: 'getplaylist',
       getid: 'getid',
       getxh: 'getxh',
       getname: 'getname',
@@ -111,72 +112,58 @@ export default {
   methods: {
     // 下一首
     next1 () {
-      if (this.getsongs.length > 1) {
-        if (this.$store.state.xh >= this.getsongs.length - 1) {
-          this.$store.commit('backzero')
-          this.$router.replace({
-            name: 'song',
-            params: {
-              id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name,
-              sub: this.getsongs[this.getxh].sub
-            }
-          }).catch(err => { console.log(err) })
-        } else {
-          this.$store.commit('add')
-          this.$router.replace({
-            name: 'song',
-            params: {
-              id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name,
-              sub: this.getsongs[this.getxh].sub
-            }
-          }).catch(err => { console.log(err) })
-        }
+      // console.log(this.getxh)
+      if (this.$store.state.xh >= this.getplaylist.length - 1) {
+        this.$store.commit('backzero')
+        this.$router.replace({
+          name: 'song',
+          params: {
+            id: this.getplaylist[this.getxh].id,
+            name1: this.getplaylist[this.getxh].name,
+            sub: this.getplaylist[this.getxh].ar[0].name
+          }
+        })
+      } else {
+        this.$store.commit('add')
+        this.$router.replace({
+          name: 'song',
+          params: {
+            id: this.getplaylist[this.getxh].id,
+            name1: this.getplaylist[this.getxh].name,
+            sub: this.getplaylist[this.getxh].ar[0].name
+          }
+        })
       }
     },
     // 上一首
     prep () {
-      if (this.getsongs.length > 1) {
-        if (this.$store.state.xh > 0) {
-          this.$store.commit('jian')
-          this.$router.replace({
-            name: 'song',
-            params: {
-              id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name,
-              sub: this.getsongs[this.getxh].sub
-            }
-          }).catch(err => { console.log(err) })
-        } else {
-          this.$store.state.xh = this.getsongs.length - 1
-          this.$router.replace({
-            name: 'song',
-            params: {
-              id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name,
-              sub: this.getsongs[this.getxh].sub
-            }
-          }).catch(err => { console.log(err) })
-        }
+      if (this.$store.state.xh > 0) {
+        this.$store.commit('jian')
+        this.$router.replace({
+          name: 'song',
+          params: {
+            id: this.getplaylist[this.getxh].id,
+            name1: this.getplaylist[this.getxh].name,
+            sub: this.getplaylist[this.getxh].ar[0].name
+          }
+        })
+      } else {
+        this.$store.state.xh = this.getplaylist.length - 1
+        this.$router.replace({
+          name: 'song',
+          params: {
+            id: this.getplaylist[this.getxh].id,
+            name1: this.getplaylist[this.getxh].name,
+            sub: this.getplaylist[this.getxh].ar[0].name
+          }
+        })
       }
     },
     // 播放结束
     ender () {
       this.next1()
     },
-    // 加入播放列表
-    cl () {
-      var obj = {}
-      if (this.$store.state.songid.includes(Number(this.$route.params.id)) === false) {
-        this.$store.state.songid.push(Number(this.$route.params.id))
-        obj.name = this.$route.params.name1
-        obj.sub = this.$route.params.sub
-        obj.id = this.$route.params.id
-        this.$store.commit('songs', obj)
-      }
-      this.isActive = true
-    },
+
     // 评论
     refresh () {
       this.refreshing = true
@@ -219,9 +206,12 @@ export default {
       this.curId = 0
     },
     // 歌词滚动
-    timeupdate () {
+    timeupdate (data) {
+      // data = 0
+      // console.log(data)
       this.currentLine = 0
-      this.currentTime1 = document.querySelector('audio').currentTime
+      this.currentTime1 = data
+      // document.querySelector('audio').currentTime = 0
       for (let j = this.currentLine; j < this.arrtime.length; j++) {
         if (
           this.currentTime1 < this.arrtime[j + 1] &&
@@ -239,11 +229,11 @@ export default {
       }
     },
     // 快进
-    seeked () {
+    seeked (data) {
       if (document.querySelector('.gc-b').innerHTML === '暂无歌词') {
         return false
       } else {
-        this.currentTime1 = document.querySelector('audio').currentTime
+        this.currentTime1 = data
         for (let i = 0; i < this.$refs.gc1.length; i++) {
           this.$refs.gc1[i].className = 'gc'
         }
@@ -312,6 +302,7 @@ export default {
     },
     // 获取信息
     get () {
+      // console.log('change')
       this.$store.state.iid = this.$route.params.id
       // mvid
       this.isloading = true
@@ -331,7 +322,7 @@ export default {
         ])
         .then(response => {
           // success
-          this.$store.state.songlist = response.data.data[0].url
+          this.$store.commit('song', response.data.data[0].url)
         })
         .catch(error => {
           // error
@@ -437,22 +428,20 @@ export default {
       this.$router.isBack = true
     }
   },
-  // 路由更新
-  beforeRouteUpdate (to, from, next) {
-    if(to.fullPath!=from.fullPath){
-      next()
-      this.get()
-    }
+  created () {
+    this.get()
+  },
+  watch: {
+    // 如果路由有变化，会再次执行该方法
+    '$route': 'get'
   },
   // 一开始加载
   mounted () {
-    this.get()
-    // console.log(this.$route.params.sub)
-    Bus.$on('timeupdate1', () => {
-      this.timeupdate()
+    Bus.$on('timeupdate1', (data) => {
+      this.timeupdate(data)
     })
-    Bus.$on('seeked1', () => {
-      this.seeked()
+    Bus.$on('seeked1', (data) => {
+      this.seeked(data)
     })
     Bus.$on('pause11', () => {
       this.pause1()
@@ -473,10 +462,18 @@ export default {
       this.$store.state.songs = []
       this.$store.state.i = ''
     }
+    if (!this.isserch) {
+      var arr = this.getplaylist
+      arr.forEach((value, index) => {
+        if (Number(arr[index].id) === Number(this.$route.params.id)) {
+          console.log(index)
+          this.$store.commit('xh', index)
+        }
+      })
+    }
     this.$store.state.isshow=true
     this.$store.state.cs = 0
     this.$store.state.states = ''
-    this.cl()
   },
   // 时间处理
   filters: {
@@ -503,7 +500,15 @@ export default {
       return box
     }
   },
-  // 销毁之前
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+        if (from.name === 'search') {
+          // vm.$store.commit('subbottom', 'pld')
+          vm.$store.state.isshow = true
+          vm.isserch = true
+        }
+    })
+  },
   beforeDestroy () {
     Bus.$off('timeupdate1')
     Bus.$off('seeked1')

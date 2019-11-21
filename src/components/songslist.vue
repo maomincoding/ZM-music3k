@@ -46,7 +46,7 @@ export default {
         this.loading = false
         this.$axios.get(['/api/top/playlist?limit=' + this.num + '&order=hot']).then(response => {
           // success
-          console.log(response.data.playlists)
+          // console.log(response.data.playlists)
           this.tjgd = response.data.playlists
           this.isloading = false
         }).catch(error => {
@@ -82,7 +82,7 @@ export default {
       this.isloading = true
       this.$axios.get(['/api/top/playlist?limit=27&order=hot']).then(response => {
         // success
-        console.log(response.data.playlists)
+        // console.log(response.data.playlists)
         this.tjgd = response.data.playlists
         this.isloading = false
       }).catch(error => {

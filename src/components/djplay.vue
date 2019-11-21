@@ -20,7 +20,6 @@
 import {mapGetters} from 'vuex'
 export default {
   name: 'djplay',
-  components: {},
   data () {
     return {
       isloading: false,
@@ -33,11 +32,11 @@ export default {
   },
   computed: {
     ...mapGetters({
-      playlist: 'playlist',
-      getsongs: 'getsongs',
-      geti: 'geti',
+      getsong: 'getsong',
+      getplaylist: 'getplaylist',
       getxh: 'getxh',
-      getcs: 'getcs'
+      getcs: 'getcs',
+      geti: 'geti'
     })
   },
   methods: {

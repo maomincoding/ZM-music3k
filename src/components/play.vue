@@ -1,7 +1,7 @@
 <!--底部栏音乐-->
 <template>
-  <div v-if="playlist!=''">
-    <mu-paper class="demo-paper audios-b ovf" :z-depth="3" >
+  <div v-if="getsong!=''">
+    <mu-paper class="demo-paper audios-b ovf" :z-depth="3">
       <div class="ovf listd"  v-show="isshow===true">
         <div  style="float:left" class="liopen">
           <mu-button  icon color="black" ripple  v-for="(item,index) in icons"  :key="index" v-if="item.is" @click.stop="made(index)">
@@ -40,8 +40,9 @@
       </div>
       <!--1-->
       <audio
+        v-if="isshow===true||isshow===false"
         :controls="isshow"
-        :src="playlist"
+        :src="getsong"
         ref="audio"
         :loop="modeLoop"
         class="audios"
@@ -57,17 +58,11 @@
     <mu-bottom-sheet :open.sync="open" class="list-tc">
       <mu-sub-header class="list-tct">播放列表</mu-sub-header>
       <mu-list textline="two-line">
-        <mu-list-item avatar button  v-for="(item,index) in getsongs" :key="index" ripple @click="go(item.id,item.name,item.src)"  class="songlists"  :alt="item.id"  :ind="index" ref="lis">
-          <mu-list-item-action>
-            <mu-avatar>
-              <mu-icon value="music_note" class="music" ></mu-icon>
-            </mu-avatar>
-          </mu-list-item-action>
+        <mu-list-item avatar button  v-for="(item,index) in getplaylist" :key="index" ripple @click="go(item.id,item.name,item.src)"  class="songlists"  :alt="item.id"  :ind="index" ref="lis">
           <mu-list-item-content>
             <mu-list-item-title class="songname">{{item.name}}</mu-list-item-title>
-            <mu-list-item-sub-title class="songsub">{{item.sub}}</mu-list-item-sub-title>
           </mu-list-item-content>
-          <mu-list-item-action @click.stop="romove(item.index)">
+          <mu-list-item-action @click.stop="romove(index)">
             <mu-button icon>
               <mu-icon value="close" size="20"></mu-icon>
             </mu-button>
@@ -121,14 +116,14 @@ export default {
   },
   computed: {
     ...mapGetters({
-      playlist: 'playlist',
+      getsong: 'getsong',
       isshow: 'isshow',
       getname: 'getname',
-      getsub: 'getsub',
       getsrc: 'getsrc',
       getid: 'getid',
+      getsub: 'getsub',
       geti: 'geti',
-      getsongs: 'getsongs'
+      getplaylist: 'getplaylist'
     })
   },
   watch: {
@@ -146,7 +141,7 @@ export default {
       }, this.color.timeout)
     },
     made (index) {
-      if (this.getsongs.length > 1) {
+      if (this.getplaylist !== '') {
         this.iindex++
         if (this.iindex >= this.icons.length) {
           this.iindex = 0
@@ -167,10 +162,10 @@ export default {
       Bus.$emit('ender')
     },
     timeupdate () {
-      Bus.$emit('timeupdate1')
+      Bus.$emit('timeupdate1', this.$refs.audio.currentTime)
     },
     seeked () {
-      Bus.$emit('seeked1')
+      Bus.$emit('seeked1', this.$refs.audio.currentTime)
     },
     pause1 () {
       Bus.$emit('pause11')
@@ -191,10 +186,15 @@ export default {
       this.open = true
     },
     romove (index) {
-      this.getsongs.splice(index, 1)
-      this.$store.state.songid.splice(index, 1)
+      this.getplaylist.splice(index, 1)
     },
-    go (id, name, src) {
+    j0 () {
+      this.$refs.audio.play()
+    },
+    j1 () {
+      this.$refs.audio.pause()
+    },
+    go (id, name, sub, src) {
       this.open = false
       if (this.geti === 'dj') {
         this.$router.replace({
@@ -202,7 +202,7 @@ export default {
           params: {
             id: id,
             name1: name,
-            src: this.src
+            src: sub
           }
         })
       } else {
@@ -210,7 +210,6 @@ export default {
           name: 'song',
           params: {
             id: id,
-            sub: this.sub,
             name1: name
           }
         })
@@ -236,12 +235,12 @@ export default {
             name1: this.name
           }
         })
-        this.$store.state.time1 = this.currtime
+        // this.$store.state.time1 = this.currtime
       }
     },
     get () {
       this.$store.state.states = 'on'
-      if (this.playlist !== '') {
+      if (this.getsong !== '') {
         this.name = this.getname
         this.sub = this.getsub
         this.src = this.getsrc
@@ -253,7 +252,7 @@ export default {
           var arr = Array.prototype.slice.call(obj)
           arr.forEach((value, index) => {
             if (Number(arr[index].getAttribute('alt')) === this.ids) {
-              arr[index].style.background = '#f5f5f5'
+              arr[index].classList.add('active')
             }
           })
         }
@@ -268,6 +267,16 @@ export default {
 
 </script>
 <style  scoped>
+  .list-tc {
+    border-top-right-radius: 15px;
+    border-top-left-radius:15px ;
+  }
+  .active .songname  {
+    color: #2196F3;
+  }
+  .active .songsub{
+    color:#2196F3;
+  }
   .songname{
     overflow: hidden;
     text-overflow: ellipsis;
