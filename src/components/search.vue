@@ -81,7 +81,6 @@ export default {
           .then(response => {
             // success
             this.search1 = response.data.result.songs
-            // console.log(response.data.result.songs)
           })
           .catch(error => {
             // error

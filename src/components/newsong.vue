@@ -42,11 +42,19 @@ export default {
       this.$router.isBack = true
     },
     get () {
+      var arr = []
       this.isloading = true
       this.$axios.get(['/api/recommend/songs']).then(response => {
         // success
-        this.$store.commit('playlist', response.data.recommend)
         this.list = response.data.recommend
+        this.list.forEach((val, i) => {
+          var obj = {}
+          obj.id = this.list[i].id
+          obj.name = this.list[i].name
+          obj.sub = this.list[i].artists[0].name
+          arr.push(obj)
+        })
+        this.$store.commit('playlist', arr)
         this.isloading = false
       }).catch(error => {
         // error

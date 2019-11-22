@@ -42,11 +42,9 @@ export default {
       this.$refs.container.scrollTop = 0
       setTimeout(() => {
         this.refreshing = false
-        // this.text = this.text === 'List' ? 'Menu' : 'List'
         this.loading = false
         this.$axios.get(['/api/top/playlist?limit=' + this.num + '&order=hot']).then(response => {
           // success
-          // console.log(response.data.playlists)
           this.tjgd = response.data.playlists
           this.isloading = false
         }).catch(error => {
@@ -54,7 +52,6 @@ export default {
           alert('失败！')
           console.log(error)
         })
-        // this.get()
       }, 500)
     },
     load () {
@@ -82,7 +79,6 @@ export default {
       this.isloading = true
       this.$axios.get(['/api/top/playlist?limit=27&order=hot']).then(response => {
         // success
-        // console.log(response.data.playlists)
         this.tjgd = response.data.playlists
         this.isloading = false
       }).catch(error => {

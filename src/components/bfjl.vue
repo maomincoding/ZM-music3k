@@ -42,6 +42,7 @@ export default {
       this.$router.isBack = true
     },
     get () {
+      var arr = []
       this.isloading = true
       const user = localStorage.getItem('user')
       // 最近播放
@@ -50,7 +51,14 @@ export default {
         .then(response => {
           // success
           this.list = response.data.allData
-          this.$store.commit('playlist', response.data.allData)
+          this.list.forEach((val, i) => {
+            var obj = {}
+            obj.id = this.list[i].id
+            obj.name = this.list[i].song.name
+            obj.sub = this.list[i].song.ar[0].name
+            arr.push(obj)
+          })
+          this.$store.commit('playlist', arr)
           this.isloading = false
         })
         .catch(error => {

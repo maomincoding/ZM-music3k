@@ -37,7 +37,7 @@
             <p class="tit">我的歌单</p>
             <div class="gd-box">
             <div v-for="(item,index) in list" :key="index" class="ovf">
-              <router-link :to="{name: 'playListDetail',params: { id: item.id}}">
+              <router-link :to="{name: 'playListDetail',params: { id: item.id, name:item.name}}">
               <img :src="item.coverImgUrl" alt class="gdimg">
               <p class="gdtxt">{{item.name}}</p>
               </router-link>
@@ -77,7 +77,7 @@
       <p class="tit">推荐歌单</p>
       <div class="tjgd-b ovf">
         <div v-for="(item,index) in tjgd" :key="index">
-          <router-link :to="{name: 'playListDetail',params: { id: item.id}}">
+          <router-link :to="{name: 'playListDetail',params: { id: item.id, name:item.name}}">
             <img :src="item.picUrl" alt>
             <div class="nn">{{item.name}}</div>
           </router-link>

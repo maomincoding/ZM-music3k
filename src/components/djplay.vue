@@ -7,7 +7,9 @@
         <mu-button icon slot="left" @click="back">
           <mu-icon value="arrow_back"></mu-icon>
         </mu-button>
-        <marquee direction='left' class="gd">{{name}}</marquee>
+        <div>
+          <marquee :lists="name"></marquee>
+        </div>
       </mu-appbar>
       <div class="img-b" >
         <img :src="src" alt class="annim">
@@ -16,10 +18,14 @@
   </div>
 </template>
 
-<script>import Bus from '../bus/bus'
+<script>import marquee from './marquee'
+import Bus from '../bus/bus'
 import {mapGetters} from 'vuex'
 export default {
   name: 'djplay',
+  components: {
+    marquee
+  },
   data () {
     return {
       isloading: false,
@@ -40,31 +46,17 @@ export default {
     })
   },
   methods: {
-    // 加入播放列表
-    cl () {
-      var obj = {}
-      if (this.$store.state.songid.includes(Number(this.$route.params.id)) === false) {
-        this.$store.state.songid.push(Number(this.$route.params.id))
-        obj.name = this.$route.params.name1
-        obj.id = this.$route.params.id
-        obj.src = this.$route.params.src
-        obj.url = this.url
-        this.$store.commit('songs', obj)
-      }
-      this.isActive = true
-    },
     // 下一首
     next1 () {
-      console.log(window.history)
-      if (this.getsongs.length > 1) {
-        if (this.$store.state.xh >= this.getsongs.length - 1) {
+      if (this.getplaylist.length > 1) {
+        if (this.$store.state.xh >= this.getplaylist.length - 1) {
           this.$store.commit('backzero')
           this.$router.replace({
             name: 'djplay',
             params: {
-              id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name,
-              src: this.getsongs[this.getxh].src
+              id: this.getplaylist[this.getxh].id,
+              name1: this.getplaylist[this.getxh].name,
+              src: this.getplaylist[this.getxh].src
             }
           }).catch(err => { console.log(err) })
         } else {
@@ -72,9 +64,9 @@ export default {
           this.$router.replace({
             name: 'djplay',
             params: {
-              id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name,
-              src: this.getsongs[this.getxh].src
+              id: this.getplaylist[this.getxh].id,
+              name1: this.getplaylist[this.getxh].name,
+              src: this.getplaylist[this.getxh].src
             }
           }).catch(err => { console.log(err) })
         }
@@ -82,25 +74,25 @@ export default {
     },
     // 上一首
     prep () {
-      if (this.getsongs.length > 1) {
+      if (this.getplaylist.length > 1) {
         if (this.$store.state.xh > 0) {
           this.$store.commit('jian')
           this.$router.replace({
             name: 'djplay',
             params: {
-              id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name,
-              src: this.getsongs[this.getxh].src
+              id: this.getplaylist[this.getxh].id,
+              name1: this.getplaylist[this.getxh].name,
+              src: this.getplaylist[this.getxh].src
             }
           }).catch(err => { console.log(err) })
         } else {
-          this.$store.state.xh = this.getsongs.length - 1
+          this.$store.state.xh = this.getplaylist.length - 1
           this.$router.replace({
             name: 'djplay',
             params: {
-              id: this.getsongs[this.getxh].id,
-              name1: this.getsongs[this.getxh].name,
-              src: this.getsongs[this.getxh].src
+              id: this.getplaylist[this.getxh].id,
+              name1: this.getplaylist[this.getxh].name,
+              src: this.getplaylist[this.getxh].src
             }
           }).catch(err => { console.log(err) })
         }
@@ -121,20 +113,6 @@ export default {
     ender () {
       this.next1()
     },
-    // 列表跳转
-    go (id, name1, src) {
-      this.open1 = false
-      if (this.$store.state.i === 'dj') {
-        this.$router.replace({
-          name: 'djplay',
-          params: {
-            id: id,
-            name1: name1,
-            src: src
-          }
-        })
-      }
-    },
     // 获取
     get () {
       this.isloading = true
@@ -148,7 +126,8 @@ export default {
         ])
         .then(response => {
           // success
-          this.$store.state.songlist = response.data.data[0].url
+          this.$store.commit('song', response.data.data[0].url)
+          console.log(response.data)
           this.isloading = false
         })
         .catch(error => {
@@ -163,9 +142,15 @@ export default {
       this.$router.isBack = true
     }
   },
+  created () {
+    this.get()
+  },
+  watch: {
+    // 如果路由有变化，会再次执行该方法
+    '$route': 'get'
+  },
   // 一开始加载
   mounted () {
-    this.get()
     Bus.$on('pause11', () => {
       this.pause1()
     })
@@ -187,14 +172,16 @@ export default {
       this.$store.state.songs = []
       this.$store.state.i = 'dj'
     }
-    this.cl()
-  },
-  // 路由更新
-  beforeRouteUpdate (to, from, next) {
-    if (to.fullPath !== from.fullPath) {
-      next()
-      this.get()
+    if (!this.isserch) {
+      var arr = this.getplaylist
+      arr.forEach((value, index) => {
+        if (Number(arr[index].id) === Number(this.$route.params.id)) {
+          console.log(index)
+          this.$store.commit('xh', index)
+        }
+      })
     }
+    this.$store.state.states = ''
   },
   // 销毁之前
   beforeDestroy () {
@@ -210,7 +197,6 @@ export default {
     this.$store.state.name = this.name
     this.$store.state.sub = '电台'
     this.$store.state.src = this.src
-    this.$store.state.iid = this.$route.params.id
     next()
   }
 }

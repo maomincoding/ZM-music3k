@@ -7,7 +7,9 @@
         <mu-button icon slot="left" @click="back">
           <mu-icon value="arrow_back"></mu-icon>
         </mu-button>
-        <span class="name">{{name}}</span>
+        <div>
+          <marquee :lists="name"></marquee>
+        </div>
       </mu-appbar>
       <div class="center">
         <mu-list>
@@ -28,20 +30,24 @@
   </div>
 </template>
 
-<script>
+<script>import marquee from './marquee'
 export default {
   name: 'playListDetail',
-  components: {},
+  components: {
+    marquee
+  },
   data () {
     return {
       isloading: false,
       list: [],
-      name: ''
+      name2: '',
+      obj: {}
     }
   },
   watch: {},
   methods: {
     get () {
+      var arr = []
       this.isloading = true
       this.$axios
         .get([
@@ -50,10 +56,15 @@ export default {
         ])
         .then(response => {
           // success
-          this.name = response.data.playlist.name
           this.list = response.data.playlist.tracks
-          // console.log(response.data.playlist.tracks)
-          this.$store.commit('playlist', response.data.playlist.tracks)
+          this.list.forEach((val, i) => {
+            var obj = {}
+            obj.id = this.list[i].id
+            obj.name = this.list[i].name
+            obj.sub = this.list[i].ar[0].name
+            arr.push(obj)
+          })
+          this.$store.commit('playlist', arr)
           this.isloading = false
         })
         .catch(error => {
@@ -68,6 +79,7 @@ export default {
     }
   },
   created () {
+    this.name = this.$route.params.name
     this.$store.commit('playlist', '')
   },
   // 解除keep-alive的缓存

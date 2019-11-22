@@ -45,11 +45,19 @@ export default {
       this.$router.isBack = true
     },
     get () {
+      var arr = []
       this.isloading = true
       this.$axios.get(['/api/top/list?idx=1']).then(response => {
         // success
         this.list = response.data.playlist.tracks
-        this.$store.commit('playlist', response.data.playlist.tracks)
+        this.list.forEach((val, i) => {
+          var obj = {}
+          obj.id = this.list[i].id
+          obj.name = this.list[i].name
+          obj.sub = this.list[i].ar[0].name
+          arr.push(obj)
+        })
+        this.$store.commit('playlist', arr)
         this.titi = response.data.playlist.name
         this.isloading = false
       }).catch(error => {

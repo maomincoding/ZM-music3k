@@ -61,6 +61,7 @@
         <mu-list-item avatar button  v-for="(item,index) in getplaylist" :key="index" ripple @click="go(item.id,item.name,item.src)"  class="songlists"  :alt="item.id"  :ind="index" ref="lis">
           <mu-list-item-content>
             <mu-list-item-title class="songname">{{item.name}}</mu-list-item-title>
+            <mu-list-item-sub-title class="songsub">{{item.sub}}</mu-list-item-sub-title>
           </mu-list-item-content>
           <mu-list-item-action @click.stop="romove(index)">
             <mu-button icon>
@@ -235,7 +236,6 @@ export default {
             name1: this.name
           }
         })
-        // this.$store.state.time1 = this.currtime
       }
     },
     get () {

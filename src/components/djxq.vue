@@ -7,7 +7,9 @@
         <mu-button icon slot="left" @click="back">
           <mu-icon value="arrow_back"></mu-icon>
         </mu-button>
-        <span class="ttt">{{name}}</span>
+        <div>
+          <marquee :lists="name"></marquee>
+        </div>
       </mu-appbar>
       <div class="center">
         <mu-list>
@@ -27,10 +29,12 @@
   </div>
 </template>
 
-<script>
+<script>import marquee from './marquee'
 export default {
   name: 'djxq',
-  components: {},
+  components: {
+    marquee
+  },
   data () {
     return {
       isloading: false,
@@ -42,8 +46,8 @@ export default {
   watch: {},
   methods: {
     get () {
+      var arr = []
       this.isloading = true
-      this.name = this.$route.params.name1
       this.$axios
         .get([
           '/api/dj/program?rid=' +
@@ -52,7 +56,14 @@ export default {
         .then(response => {
           // success
           this.list = response.data.programs
-          this.$store.commit('playlist', response.data.programs)
+          this.list.forEach((val, i) => {
+            var obj = {}
+            obj.id = this.list[i].mainSong.id
+            obj.name = this.list[i].name
+            obj.src = this.list[i].coverUrl
+            arr.push(obj)
+          })
+          this.$store.commit('playlist', arr)
           this.isloading = false
         })
         .catch(error => {
@@ -67,6 +78,7 @@ export default {
     }
   },
   created () {
+    this.name = this.$route.params.name1
     this.$store.commit('playlist', '')
   },
   // 解除keep-alive的缓存

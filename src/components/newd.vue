@@ -7,7 +7,9 @@
         <mu-button icon slot="left" @click="back">
           <mu-icon value="arrow_back"></mu-icon>
         </mu-button>
-        <span class="ttt">专辑</span>
+        <div>
+          <marquee :lists="name"></marquee>
+        </div>
       </mu-appbar>
       <div class="center lls">
         <div v-for="(item,index) in list" :key="index" class="listb ovf">
@@ -24,10 +26,12 @@
   </div>
 </template>
 
-<script>
+<script>import marquee from './marquee'
 export default {
   name: 'newd',
-  components: {},
+  components: {
+    marquee
+  },
   data () {
     return {
       isloading: false,
@@ -42,13 +46,21 @@ export default {
       this.$router.isBack = true
     },
     get () {
+      var arr = []
       this.isloading = true
       this.$axios
         .get(['/api/album?id=' + this.$route.params.id])
         .then(response => {
           // success
           this.list = response.data.songs
-          this.$store.commit('playlist', response.data.songs)
+          this.list.forEach((val, i) => {
+            var obj = {}
+            obj.id = this.list[i].id
+            obj.name = this.list[i].name
+            obj.sub = this.list[i].ar[0].name
+            arr.push(obj)
+          })
+          this.$store.commit('playlist', arr)
           this.isloading = false
         }).catch(error => {
         // error
@@ -58,6 +70,7 @@ export default {
     }
   },
   created () {
+    this.name = this.$route.params.name1
     this.$store.commit('playlist', '')
   },
   // 解除keep-alive的缓存

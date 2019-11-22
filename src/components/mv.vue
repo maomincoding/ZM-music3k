@@ -6,7 +6,10 @@
         <mu-button icon slot="left" @click="back">
           <mu-icon value="arrow_back"></mu-icon>
         </mu-button>
-        <span class="ttt">{{ttt}}</span>
+        <!--<span class="ttt">{{ttt}}</span>-->
+        <div>
+          <marquee :lists="ttt"></marquee>
+        </div>
       </mu-appbar>
       <div class="video-b"><video class="video1" :src="arr1" controls autoplay="autoplay"></video></div>
       <mu-list textline="three-line" class="pllist" v-show="!isloading">
@@ -27,9 +30,12 @@
     </div>
 </template>
 
-<script>
+<script>import marquee from './marquee'
 export default {
   name: 'mv',
+  components: {
+    marquee
+  },
   data () {
     return {
       arr1: '',
@@ -133,8 +139,10 @@ export default {
   },
   mounted () {
     this.get()
-    // this.$store.state.songlist = ''
     this.$store.state.isshow = ''
+    this.ttt = this.$route.params.name1
+  },
+  created () {
     this.ttt = this.$route.params.name1
   }
 }

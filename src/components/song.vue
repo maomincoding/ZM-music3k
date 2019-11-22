@@ -8,7 +8,7 @@
           <mu-icon value="arrow_back"></mu-icon>
         </mu-button>
         <div class="big">
-          <marquee direction='left' class="gd">{{name}} —— {{subname}}</marquee>
+          <marquee :lists="fullname"></marquee>
         </div>
         <mu-button icon slot="right"  @click="open = !open">
           <mu-icon size="28" value="chat" class="play" color="white" center ></mu-icon>
@@ -28,7 +28,7 @@
           <img :src="imgsrc" alt class="annim" >
         </div>
       </div>
-      <div class="gc-box"  v-show="curId===1" ></div>
+      <div class="gc-box"  v-show="curId===1"  ref="gcbox"></div>
       <div class="gc-bb" v-show="curId===1"  @click="l0">
         <div class="gc-b"  >
           <div
@@ -59,10 +59,14 @@
 
 </template>
 
-<script>import Bus from '../bus/bus'
+<script>import marquee from './marquee'
+import Bus from '../bus/bus'
 import {mapGetters} from 'vuex'
 export default {
   name: 'song',
+  components: {
+    marquee
+  },
   data () {
     return {
       curId: 0,
@@ -94,7 +98,8 @@ export default {
       ids: '',
       ff: '',
       backpath: '',
-      isserch: false
+      isserch: false,
+      fullname: ''
     }
   },
   computed: {
@@ -112,7 +117,6 @@ export default {
   methods: {
     // 下一首
     next1 () {
-      // console.log(this.getxh)
       if (this.$store.state.xh >= this.getplaylist.length - 1) {
         this.$store.commit('backzero')
         this.$router.replace({
@@ -120,7 +124,7 @@ export default {
           params: {
             id: this.getplaylist[this.getxh].id,
             name1: this.getplaylist[this.getxh].name,
-            sub: this.getplaylist[this.getxh].ar[0].name
+            sub: this.getplaylist[this.getxh].sub
           }
         })
       } else {
@@ -130,7 +134,7 @@ export default {
           params: {
             id: this.getplaylist[this.getxh].id,
             name1: this.getplaylist[this.getxh].name,
-            sub: this.getplaylist[this.getxh].ar[0].name
+            sub: this.getplaylist[this.getxh].sub
           }
         })
       }
@@ -144,7 +148,7 @@ export default {
           params: {
             id: this.getplaylist[this.getxh].id,
             name1: this.getplaylist[this.getxh].name,
-            sub: this.getplaylist[this.getxh].ar[0].name
+            sub: this.getplaylist[this.getxh].sub
           }
         })
       } else {
@@ -154,7 +158,7 @@ export default {
           params: {
             id: this.getplaylist[this.getxh].id,
             name1: this.getplaylist[this.getxh].name,
-            sub: this.getplaylist[this.getxh].ar[0].name
+            sub: this.getplaylist[this.getxh].sub
           }
         })
       }
@@ -302,8 +306,8 @@ export default {
     },
     // 获取信息
     get () {
-      // console.log('change')
       this.$store.state.iid = this.$route.params.id
+      this.fullname = this.$route.params.name1 + '——' + this.$route.params.sub
       // mvid
       this.isloading = true
       this.$axios.get(['/api/search?keywords=' + this.$route.params.name1 + '&type=1004']).then(response => {
@@ -336,7 +340,7 @@ export default {
         ])
         .then(response => {
           // success
-          document.querySelector('.gc-box').style.background = 'url(' + response.data.songs[0].al.picUrl + ')'
+          this.$refs.gcbox.style.background = 'url(' + response.data.songs[0].al.picUrl + ')'
           this.imgsrc = response.data.songs[0].al.picUrl
           this.name = response.data.songs[0].name
           this.$store.state.name = response.data.songs[0].name
@@ -466,7 +470,6 @@ export default {
       var arr = this.getplaylist
       arr.forEach((value, index) => {
         if (Number(arr[index].id) === Number(this.$route.params.id)) {
-          console.log(index)
           this.$store.commit('xh', index)
         }
       })
@@ -505,10 +508,12 @@ export default {
         if (from.name === 'search') {
           // vm.$store.commit('subbottom', 'pld')
           vm.$store.state.isshow = true
+          vm.$store.commit('playlist', '')
           vm.isserch = true
         }
     })
   },
+  // 销毁之前
   beforeDestroy () {
     Bus.$off('timeupdate1')
     Bus.$off('seeked1')
@@ -536,10 +541,6 @@ export default {
     100% {
       transform: rotate(360deg);
     }
-  }
-  .gd{
-    margin-top:20px;
-    font-size: 18px;
   }
   .cc{
     background: rgba(0, 0, 0, 0.2);
@@ -726,9 +727,6 @@ export default {
   }
   .con{
     width: 100%;
-    /*overflow: hidden;*/
-    /*white-space: nowrap;*/
-    /*text-overflow: ellipsis;*/
     color: #333333;
     font-size:15px;
   }

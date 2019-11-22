@@ -28,7 +28,7 @@ export default new Router({
       }
     },
     {
-      path: '/playListDetail/:id',
+      path: '/playListDetail/:id/:name',
       name: 'playListDetail',
       component: pather => require(['../components/playListDetail.vue'], pather),
       meta: {
