@@ -7,9 +7,12 @@
         <mu-button icon slot="left" @click="back">
           <mu-icon value="arrow_back"></mu-icon>
         </mu-button>
-        <div>
+        <div style="width: 60%;">
           <marquee :lists="name"></marquee>
         </div>
+        <mu-button icon slot="right"  @click="goindex">
+          <mu-icon size="28" value="home" class="play" color="white" center ></mu-icon>
+        </mu-button>
       </mu-appbar>
       <div class="img-b" >
         <img :src="src" alt class="annim">
@@ -46,6 +49,11 @@ export default {
     })
   },
   methods: {
+    goindex () {
+      this.$router.replace({
+        name: 'index'
+      })
+    },
     // 下一首
     next1 () {
       if (this.getplaylist.length > 1) {

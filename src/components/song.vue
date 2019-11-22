@@ -10,6 +10,9 @@
         <div class="big">
           <marquee :lists="fullname"></marquee>
         </div>
+        <mu-button icon slot="right"  @click="goindex">
+          <mu-icon size="28" value="home" class="play" color="white" center ></mu-icon>
+        </mu-button>
         <mu-button icon slot="right"  @click="open = !open">
           <mu-icon size="28" value="chat" class="play" color="white" center ></mu-icon>
         </mu-button>
@@ -115,6 +118,11 @@ export default {
   },
   watch: {},
   methods: {
+    goindex () {
+      this.$router.replace({
+        name: 'index'
+      })
+    },
     // 下一首
     next1 () {
       if (this.$store.state.xh >= this.getplaylist.length - 1) {
